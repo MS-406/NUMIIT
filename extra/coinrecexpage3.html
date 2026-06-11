@@ -1,0 +1,287 @@
+// coin app translation page
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NumiIT - Result Detail</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@400;500;700&family=Noto+Sans:wght@400&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@100..900&family=Playfair+Display:wght@100..900&display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .bounding-box {
+            position: absolute;
+            border: 2px solid #e7c268;
+            background: rgba(231, 194, 104, 0.15);
+            border-radius: 4px;
+            box-shadow: 0 0 12px rgba(231, 194, 104, 0.5);
+            pointer-events: none;
+        }
+        .glass-panel {
+            background: rgba(17, 20, 22, 0.8);
+            backdrop-filter: blur(20px);
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #111416;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #323537;
+            border-radius: 10px;
+        }
+    </style>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-high": "#282a2d",
+                    "on-primary-container": "#83829b",
+                    "on-surface-variant": "#c8c5cd",
+                    "tertiary-fixed-dim": "#ffb780",
+                    "error": "#ffb4ab",
+                    "on-tertiary-fixed-variant": "#6f3800",
+                    "primary": "#c6c4df",
+                    "on-secondary-fixed-variant": "#5a4400",
+                    "on-secondary-container": "#f2cd72",
+                    "secondary-fixed": "#ffdf96",
+                    "primary-fixed-dim": "#c6c4df",
+                    "on-error-container": "#ffdad6",
+                    "on-tertiary": "#4e2600",
+                    "inverse-on-surface": "#2e3133",
+                    "surface": "#111416",
+                    "primary-container": "#1a1a2e",
+                    "secondary": "#e7c268",
+                    "on-secondary-fixed": "#251a00",
+                    "on-primary-fixed": "#1a1a2e",
+                    "secondary-container": "#715600",
+                    "background": "#111416",
+                    "tertiary-container": "#301500",
+                    "on-tertiary-fixed": "#2f1400",
+                    "surface-container-low": "#191c1e",
+                    "on-error": "#690005",
+                    "on-background": "#e1e2e5",
+                    "outline": "#929097",
+                    "on-primary-fixed-variant": "#45455b",
+                    "outline-variant": "#47464c",
+                    "inverse-primary": "#5d5c74",
+                    "surface-container-highest": "#323537",
+                    "tertiary": "#ffb780",
+                    "surface-dim": "#111416",
+                    "primary-fixed": "#e2e0fc",
+                    "tertiary-fixed": "#ffdcc4",
+                    "secondary-fixed-dim": "#e7c268",
+                    "inverse-surface": "#e1e2e5",
+                    "error-container": "#93000a",
+                    "on-secondary": "#3e2e00",
+                    "on-surface": "#e1e2e5",
+                    "surface-container": "#1d2022",
+                    "surface-container-lowest": "#0c0f11",
+                    "on-primary": "#2f2e43",
+                    "surface-variant": "#323537",
+                    "surface-tint": "#c6c4df",
+                    "surface-bright": "#37393c",
+                    "on-tertiary-container": "#bb7337"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "container-padding": "24px",
+                    "xs": "4px",
+                    "md": "16px",
+                    "gutter": "16px",
+                    "unit": "4px",
+                    "sm": "8px",
+                    "xxl": "48px",
+                    "xl": "32px",
+                    "lg": "24px"
+            },
+            "fontFamily": {
+                    "headline-md": ["Playfair Display"],
+                    "script-display": ["Noto Sans"],
+                    "body-md": ["DM Sans"],
+                    "headline-lg-mobile": ["Playfair Display"],
+                    "headline-lg": ["Playfair Display"],
+                    "display-lg": ["Playfair Display"],
+                    "label-md": ["DM Sans"],
+                    "body-lg": ["DM Sans"]
+            },
+            "fontSize": {
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "script-display": ["20px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["28px", {"lineHeight": "34px", "fontWeight": "600"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface font-body-md min-h-screen pb-xxl">
+<!-- Top AppBar (from Shared Components) -->
+<header class="sticky top-0 z-50 glass-panel bg-surface/80 backdrop-blur-xl">
+<div class="flex justify-between items-center w-full px-lg py-md max-w-7xl mx-auto">
+<button class="hover:bg-surface-container-highest/20 transition-colors p-sm rounded-full active:opacity-80 active:scale-95">
+<span class="material-symbols-outlined text-secondary">arrow_back</span>
+</button>
+<h1 class="font-headline-md text-headline-md font-bold text-secondary">NumiIT</h1>
+<div class="w-10 h-10 rounded-full overflow-hidden border border-outline-variant">
+<img alt="User profile avatar" data-alt="A professional studio portrait of a museum curator in his late 40s, with a warm smile and thoughtful expression. He is wearing a charcoal blazer over a dark turtleneck. The lighting is soft and cinematic, with a dark, textured studio background that complements the premium, academic aesthetic of the numismatic application." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDtDUkk_tuuACrkNa_QVwct6dkUA_LJbjwabmW6eIqF71IZLVLUzkKzBC1--SZ7PfZ2vPrxLHNhugtGrI-qKgbNXye3v--jS7qCLSdc8dOTDE89tGRTY3f5NnIl9MKPqrzYkohIM7jdtQRCviOgodLJuPenj-G0Hv9kHIe7cqEfUX_XTZtRezPvcTgTOGQCX7HEjG0uaA0QdHsuvIJ2ar4heHlm4KZb-mOT2AxWFQ33jT2pb6XEoB_CUFYXMHiVlTWPV-o3mEzcd_f0"/>
+</div>
+</div>
+</header>
+<main class="max-w-xl mx-auto px-lg">
+<!-- Coin Analysis Header -->
+<section class="mt-md relative group">
+<div class="relative w-full aspect-square rounded-xl overflow-hidden bg-surface-container-low border border-outline-variant/30">
+<img class="w-full h-full object-contain" data-alt="A high-resolution, macro close-up of an ancient Mauryan silver punch-marked coin. The coin is weathered with a rich patina, showing distinct geometric symbols and early Brahmi script characters. It is presented on a dark, velvet-like surface with dramatic side lighting that emphasizes the deep indentations and historical texture of the metallic artifact." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDawunt_ZNQk0XfMZAWJtjQBIhY3y0DERjUWUGQJYUby-92huK56UfUoAKr20A_eiqnxOSNkrNHP5X3WP44n99IvX5_TjOGaL0ABoAgp9EG3Isc-MU3LzX2t7-6RuxowtuXJNc3OlmtsRRbo9pdrC_-4BBqo_I0yVh0IEBhWtb08WnPhy9p2MfTseyozpj3uxlo4RG6g1vrcVygPkkAksnvmUE6v3dlq_dNL_Y8BSJjP4kkfEgiwB1qI4eqDjJE1U5FEd-pd1kD6aNb"/>
+<!-- Bounding Boxes Overlay -->
+<div class="bounding-box" style="top: 35%; left: 30%; width: 25%; height: 20%;"></div>
+<div class="bounding-box" style="top: 50%; left: 55%; width: 15%; height: 15%;"></div>
+<!-- Badge Overlay -->
+<div class="absolute top-md left-md flex flex-col gap-xs">
+<span class="bg-secondary-container text-on-secondary-container px-md py-xs rounded-full font-label-md text-label-md flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">verified</span>
+                        92% Confidence
+                    </span>
+</div>
+</div>
+</section>
+<!-- Primary Tags -->
+<section class="mt-lg flex flex-wrap gap-sm">
+<span class="bg-primary-container text-on-primary-container px-lg py-sm rounded-xl font-label-md text-label-md flex items-center gap-sm">
+<span class="material-symbols-outlined text-[18px]">history_edu</span>
+                Brahmi Script
+            </span>
+<span class="bg-surface-container-high text-on-surface-variant px-lg py-sm rounded-xl font-label-md text-label-md">
+                3rd Century BCE
+            </span>
+<span class="bg-surface-container-high text-on-surface-variant px-lg py-sm rounded-xl font-label-md text-label-md">
+                Mauryan Empire
+            </span>
+</section>
+<!-- Tabs -->
+<section class="mt-xl border-b border-outline-variant/30">
+<div class="flex gap-lg">
+<button class="pb-md text-secondary border-b-2 border-secondary font-bold font-label-md text-label-md">Translation</button>
+<button class="pb-md text-on-surface-variant font-label-md text-label-md hover:text-on-surface transition-colors">Transliteration</button>
+<button class="pb-md text-on-surface-variant font-label-md text-label-md hover:text-on-surface transition-colors">Details</button>
+</div>
+</section>
+<!-- Translation Content -->
+<section class="mt-xl space-y-xl">
+<div class="bg-surface-container-low p-xl rounded-xl border border-outline-variant/20">
+<div class="flex flex-col items-center text-center gap-md">
+<span class="text-secondary font-script-display text-[48px] tracking-widest">𑀅𑀲𑁄𑀓</span>
+<div class="w-24 h-px bg-outline-variant/50"></div>
+<span class="text-on-surface font-headline-md text-headline-md italic">"King Ashoka"</span>
+</div>
+</div>
+<!-- Historical Context Card -->
+<div class="bg-[#F4A261] bg-opacity-10 border border-[#F4A261] border-opacity-30 p-lg rounded-xl flex gap-lg">
+<span class="material-symbols-outlined text-[#F4A261] shrink-0">info</span>
+<div>
+<h3 class="text-[#F4A261] font-bold mb-xs">Historical Context</h3>
+<p class="text-on-surface-variant text-body-md leading-relaxed">
+                        This inscription is typical of the Edicts of Ashoka. The Brahmi characters identified here specifically denote the personal name of the emperor, often prefixed with 'Devanampiya' (Beloved of the Gods).
+                    </p>
+</div>
+</div>
+</section>
+<!-- Notes Section -->
+<section class="mt-xl mb-xl">
+<label class="block font-label-md text-label-md text-on-surface-variant mb-sm ml-xs">Researcher Notes</label>
+<div class="relative">
+<textarea class="w-full bg-surface-container-high border border-outline-variant/30 rounded-xl p-md text-on-surface placeholder:text-on-surface-variant/50 focus:border-secondary focus:ring-1 focus:ring-secondary transition-all outline-none min-h-[100px]" placeholder="Add findings or catalog numbers..."></textarea>
+<span class="material-symbols-outlined absolute bottom-md right-md text-on-surface-variant/50">edit_note</span>
+</div>
+</section>
+<!-- Action Bar -->
+<section class="flex flex-col gap-md">
+<button class="w-full bg-secondary text-on-secondary font-bold py-md rounded-xl shadow-lg shadow-secondary/10 flex items-center justify-center gap-md active:scale-95 transition-transform">
+<span class="material-symbols-outlined">bookmark</span>
+                Save to History
+            </button>
+<div class="flex items-center justify-between px-xs">
+<button class="flex items-center gap-sm text-on-surface-variant hover:text-secondary transition-colors">
+<span class="material-symbols-outlined">share</span>
+<span class="font-label-md text-label-md">Share Discovery</span>
+</button>
+<a class="text-secondary font-bold font-label-md text-label-md hover:underline flex items-center gap-xs" href="#">
+                    Scan Again
+                    <span class="material-symbols-outlined text-[18px]">recenter</span>
+</a>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation Bar (from Shared Components) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 glass-panel bg-surface-container-lowest/80 backdrop-blur-xl rounded-t-xl shadow-lg md:hidden">
+<div class="flex justify-around items-center px-lg pb-lg pt-md">
+<!-- Library -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant px-lg py-sm hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined">auto_awesome_motion</span>
+<span class="font-label-md text-label-md mt-xs">Library</span>
+</button>
+<!-- Scan -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant px-lg py-sm hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined">center_focus_strong</span>
+<span class="font-label-md text-label-md mt-xs">Scan</span>
+</button>
+<!-- History (ACTIVE) -->
+<button class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-lg py-sm active:scale-90 transition-transform duration-150">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">history</span>
+<span class="font-label-md text-label-md mt-xs">History</span>
+</button>
+<!-- Stats -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant px-lg py-sm hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined">leaderboard</span>
+<span class="font-label-md text-label-md mt-xs">Stats</span>
+</button>
+</div>
+</nav>
+<script>
+        // Micro-interaction for the bounding boxes
+        document.addEventListener('DOMContentLoaded', () => {
+            const boxes = document.querySelectorAll('.bounding-box');
+            boxes.forEach((box, index) => {
+                box.style.opacity = '0';
+                box.style.transform = 'scale(0.8)';
+                setTimeout(() => {
+                    box.style.transition = 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                    box.style.opacity = '1';
+                    box.style.transform = 'scale(1)';
+                }, 300 + (index * 200));
+            });
+        });
+
+        // Hover effect for image area
+        const coinContainer = document.querySelector('.relative.w-full.aspect-square');
+        coinContainer.addEventListener('mousemove', (e) => {
+            const rect = coinContainer.getBoundingClientRect();
+            const x = ((e.clientX - rect.left) / rect.width) * 100;
+            const y = ((e.clientY - rect.top) / rect.height) * 100;
+            
+            // Subtle parallax for highlight glow could be added here
+        });
+    </script>
+</body></html>

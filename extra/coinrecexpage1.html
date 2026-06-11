@@ -1,0 +1,331 @@
+// coin recognition app encycopedia
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NumiIT - Coin Encyclopedia</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&amp;family=DM+Sans:wght@400;500;700&amp;family=Noto+Sans:wght@400;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@100..900&amp;family=Playfair+Display:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(29, 32, 34, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(231, 194, 104, 0.1);
+        }
+        .metallic-gradient {
+            background: linear-gradient(135deg, #e7c268 0%, #ffdf96 50%, #e7c268 100%);
+        }
+        .glyph-sample {
+            filter: drop-shadow(0 0 8px rgba(231, 194, 104, 0.3));
+        }
+        body {
+            background-color: #111416;
+            color: #e1e2e5;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-surface": "#e1e2e5",
+                        "surface-container-low": "#191c1e",
+                        "on-secondary-fixed": "#251a00",
+                        "error-container": "#93000a",
+                        "surface-container": "#1d2022",
+                        "on-secondary": "#3e2e00",
+                        "secondary-fixed-dim": "#e7c268",
+                        "secondary-fixed": "#ffdf96",
+                        "inverse-on-surface": "#2e3133",
+                        "tertiary": "#ffb780",
+                        "error": "#ffb4ab",
+                        "primary-container": "#1a1a2e",
+                        "on-error-container": "#ffdad6",
+                        "secondary-container": "#715600",
+                        "surface-container-high": "#282a2d",
+                        "on-primary-fixed-variant": "#45455b",
+                        "primary": "#c6c4df",
+                        "primary-fixed": "#e2e0fc",
+                        "outline-variant": "#47464c",
+                        "on-primary-fixed": "#1a1a2e",
+                        "on-error": "#690005",
+                        "on-background": "#e1e2e5",
+                        "surface-container-lowest": "#0c0f11",
+                        "on-tertiary": "#4e2600",
+                        "primary-fixed-dim": "#c6c4df",
+                        "surface-dim": "#111416",
+                        "on-tertiary-fixed-variant": "#6f3800",
+                        "on-tertiary-container": "#bb7337",
+                        "on-surface": "#e1e2e5",
+                        "background": "#111416",
+                        "secondary": "#e7c268",
+                        "tertiary-fixed-dim": "#ffb780",
+                        "inverse-primary": "#5d5c74",
+                        "tertiary-fixed": "#ffdcc4",
+                        "outline": "#929097",
+                        "on-primary-container": "#83829b",
+                        "surface-container-highest": "#323537",
+                        "surface": "#111416",
+                        "on-surface-variant": "#c8c5cd",
+                        "on-secondary-container": "#f2cd72",
+                        "surface-bright": "#37393c",
+                        "on-secondary-fixed-variant": "#5a4400",
+                        "on-tertiary-fixed": "#2f1400",
+                        "surface-variant": "#323537",
+                        "surface-tint": "#c6c4df",
+                        "on-primary": "#2f2e43",
+                        "tertiary-container": "#301500"
+                    },
+                    "fontFamily": {
+                        "script-display": ["Noto Sans"],
+                        "headline-lg": ["Playfair Display"],
+                        "body-lg": ["DM Sans"],
+                        "label-md": ["DM Sans"],
+                        "headline-md": ["Playfair Display"],
+                        "body-md": ["DM Sans"],
+                        "display-lg": ["Playfair Display"]
+                    },
+                    "fontSize": {
+                        "script-display": ["20px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="font-body-md text-on-background selection:bg-secondary selection:text-on-secondary">
+<!-- Top Navigation -->
+<header class="fixed top-0 left-0 w-full z-50 bg-surface/80 backdrop-blur-xl">
+<div class="flex justify-between items-center w-full px-lg py-md max-w-7xl mx-auto">
+<div class="flex items-center gap-md">
+<button class="hover:bg-surface-container-highest/20 transition-colors p-sm rounded-full active:scale-95">
+<span class="material-symbols-outlined text-secondary">menu</span>
+</button>
+<h1 class="font-headline-md text-headline-md font-bold text-secondary">NumiIT</h1>
+</div>
+<div class="flex items-center gap-md">
+<button class="material-symbols-outlined text-secondary hover:bg-surface-container-highest/20 p-sm rounded-full transition-all">search</button>
+<div class="w-10 h-10 rounded-full overflow-hidden border border-secondary/20">
+<img alt="User" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuANyzzWhMD9aljAqQVspS2COJBQK-1UlgVLTYFVm8EpgpvMuj8NSVAC-4Qx8U_LR6VxLAJitRNgP8JJZKBcVDdWpdT4Ujo4r0QefHXlpR76AdJkOVkJaiWSlz41mDVUNsNK-2GiYj2rnhgIVqi1vqNiZvty5nY3qQSO7q75QDjOnbj5FH6dO3TCsarRG4XqNCsW5kan5O2c3l0_qZTBto46bV_zoVI1NrwtZn8Yv8Q2IPRBwhqCikt4LYVuDEcOtqNddzXZq9oU-oUR"/>
+</div>
+</div>
+</div>
+</header>
+<main class="pt-24 pb-32 px-lg max-w-7xl mx-auto">
+<!-- Hero Section -->
+<section class="mb-xl text-center md:text-left">
+<h2 class="font-display-lg text-display-lg text-secondary mb-sm">Coin Encyclopedia</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
+                Explore the diverse scripts and numismatic history of the Indian subcontinent, from ancient Brahmi inscriptions to modern calligraphic traditions.
+            </p>
+</section>
+<!-- Filters/Chips -->
+<div class="flex flex-wrap gap-sm mb-xl overflow-x-auto pb-sm scrollbar-hide">
+<button class="bg-secondary text-on-secondary px-lg py-sm rounded-full font-label-md text-label-md">All Scripts</button>
+<button class="bg-surface-container-high text-on-surface-variant hover:text-secondary px-lg py-sm rounded-full font-label-md text-label-md transition-colors border border-outline/10">Antiquity</button>
+<button class="bg-surface-container-high text-on-surface-variant hover:text-secondary px-lg py-sm rounded-full font-label-md text-label-md transition-colors border border-outline/10">Medieval</button>
+<button class="bg-surface-container-high text-on-surface-variant hover:text-secondary px-lg py-sm rounded-full font-label-md text-label-md transition-colors border border-outline/10">Modern</button>
+<button class="bg-surface-container-high text-on-surface-variant hover:text-secondary px-lg py-sm rounded-full font-label-md text-label-md transition-colors border border-outline/10">Regional</button>
+</div>
+<!-- Script Cards Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-xl">
+<!-- Brahmi -->
+<div class="glass-card rounded-xl p-md flex flex-col group hover:border-secondary/40 transition-all duration-300">
+<div class="relative h-48 mb-md rounded-lg overflow-hidden bg-primary-container">
+
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="font-script-display text-[64px] text-secondary glyph-sample">𑀅𑀩𑀕</span>
+</div>
+<div class="absolute top-4 right-4 bg-secondary/10 backdrop-blur-md px-md py-xs rounded-full border border-secondary/20">
+<span class="text-secondary font-label-md text-label-md uppercase tracking-widest">Ancient</span>
+</div>
+</div>
+<h3 class="font-headline-md text-headline-md text-secondary mb-xs">Brahmi</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-md flex-grow">
+                    The ancestor of most modern Indian scripts, used widely in Ashokan edicts and early coinage of the Maurya and Kushan empires.
+                </p>
+<div class="flex items-center justify-between mt-auto">
+<span class="font-label-md text-label-md text-on-tertiary-container bg-tertiary-container px-sm py-1 rounded">3rd Century BCE</span>
+<button class="text-secondary flex items-center gap-xs font-label-md text-label-md group-hover:gap-sm transition-all">
+                        Learn More <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Kharoshthi -->
+<div class="glass-card rounded-xl p-md flex flex-col group hover:border-secondary/40 transition-all duration-300">
+<div class="relative h-48 mb-md rounded-lg overflow-hidden bg-primary-container">
+<div class="absolute inset-0 opacity-20">
+<img class="w-full h-full object-cover" data-alt="Close-up macro shot of an ancient oxidized copper coin with intricate Kharoshthi script engravings. The lighting is dramatic and warm, highlighting the weathered textures and metallic sheen. The overall style is scholarly and high-fidelity, set against a deep navy background consistent with a premium numismatic museum exhibit." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5Xwexn3tO69p4dUzphF055MJrgdelv9wz-uxzAnn3BhIevoaERUZWUo_7XAFjeXEbLQRP69w7LrGb5YOokBsG4ZNOGvgkAOpBeEHxUpM5sJy74FJ1K4Geqrx4SGALCj-SzTw05QWlt9RaUz1gSCdFU66lJxFcwa8_sHwocC61ZK1GBc98oPkb7axd5wx49IOGKyGk3WMyVlnc3ZHUHtFv8edYge0guGyHSnDlkdlN2Q5mgymXwr2tKRsrgcQHePNhFVpREoMaWufL"/>
+</div>
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="font-script-display text-[64px] text-tertiary glyph-sample">𐨀𐨦𐨒</span>
+</div>
+<div class="absolute top-4 right-4 bg-tertiary/10 backdrop-blur-md px-md py-xs rounded-full border border-tertiary/20">
+<span class="text-tertiary font-label-md text-label-md uppercase tracking-widest">Gandharan</span>
+</div>
+</div>
+<h3 class="font-headline-md text-headline-md text-tertiary mb-xs">Kharoshthi</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-md flex-grow">
+                    An ancient Indo-Iranian script used in Northwest India and Gandhara. Notable for its right-to-left orientation on Indo-Greek coins.
+                </p>
+<div class="flex items-center justify-between mt-auto">
+<span class="font-label-md text-label-md text-on-tertiary-container bg-tertiary-container px-sm py-1 rounded">4th Century BCE</span>
+<button class="text-tertiary flex items-center gap-xs font-label-md text-label-md group-hover:gap-sm transition-all">
+                        Learn More <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Arabic/Persian Style -->
+<div class="glass-card rounded-xl p-md flex flex-col group hover:border-secondary/40 transition-all duration-300">
+<div class="relative h-48 mb-md rounded-lg overflow-hidden bg-primary-container">
+<div class="absolute inset-0 metallic-gradient opacity-10"></div>
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="font-script-display text-[56px] text-secondary glyph-sample">العربية</span>
+</div>
+<div class="absolute top-4 right-4 bg-secondary/10 backdrop-blur-md px-md py-xs rounded-full border border-secondary/20">
+<span class="text-secondary font-label-md text-label-md uppercase tracking-widest">Islamic</span>
+</div>
+</div>
+<h3 class="font-headline-md text-headline-md text-secondary mb-xs">Arabic</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-md flex-grow">
+                    Introduced during the Delhi Sultanate, featuring intricate calligraphy and religious kalimas on gold and silver tankas.
+                </p>
+<div class="flex items-center justify-between mt-auto">
+<span class="font-label-md text-label-md text-on-tertiary-container bg-tertiary-container px-sm py-1 rounded">12th Century CE</span>
+<button class="text-secondary flex items-center gap-xs font-label-md text-label-md group-hover:gap-sm transition-all">
+                        Learn More <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Persian -->
+<div class="glass-card rounded-xl p-md flex flex-col group hover:border-secondary/40 transition-all duration-300">
+<div class="relative h-48 mb-md rounded-lg overflow-hidden bg-surface-container-high">
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="font-script-display text-[56px] text-on-surface-variant glyph-sample">فارسی</span>
+</div>
+<div class="absolute top-4 right-4 bg-surface-container-highest/50 backdrop-blur-md px-md py-xs rounded-full border border-outline/20">
+<span class="text-on-surface-variant font-label-md text-label-md uppercase tracking-widest">Mughal</span>
+</div>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-xs">Persian</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-md flex-grow">
+                    The court language of the Mughal Empire. Famous for the poetic couplets found on the gold mohurs of Jahangir and Shah Jahan.
+                </p>
+<div class="flex items-center justify-between mt-auto">
+<span class="font-label-md text-label-md text-on-secondary-fixed-variant bg-secondary-fixed/20 px-sm py-1 rounded">16th Century CE</span>
+<button class="text-on-surface flex items-center gap-xs font-label-md text-label-md group-hover:gap-sm transition-all">
+                        Learn More <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Urdu -->
+<div class="glass-card rounded-xl p-md flex flex-col group hover:border-secondary/40 transition-all duration-300">
+<div class="relative h-48 mb-md rounded-lg overflow-hidden bg-primary-container">
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="font-script-display text-[56px] text-tertiary-fixed-dim glyph-sample">اردو</span>
+</div>
+<div class="absolute top-4 right-4 bg-tertiary/10 backdrop-blur-md px-md py-xs rounded-full border border-tertiary/20">
+<span class="text-tertiary-fixed-dim font-label-md text-label-md uppercase tracking-widest">Princely States</span>
+</div>
+</div>
+<h3 class="font-headline-md text-headline-md text-tertiary-fixed-dim mb-xs">Urdu</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-md flex-grow">
+                    Used primarily in the coinage of the Hyderabad Nizams and various Princely States during the later colonial period.
+                </p>
+<div class="flex items-center justify-between mt-auto">
+<span class="font-label-md text-label-md text-on-tertiary-container bg-tertiary-container px-sm py-1 rounded">18th Century CE</span>
+<button class="text-tertiary-fixed-dim flex items-center gap-xs font-label-md text-label-md group-hover:gap-sm transition-all">
+                        Learn More <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Pali -->
+<div class="glass-card rounded-xl p-md flex flex-col group hover:border-secondary/40 transition-all duration-300">
+<div class="relative h-48 mb-md rounded-lg overflow-hidden bg-primary-container">
+
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="font-script-display text-[56px] text-secondary-fixed glyph-sample">पाऴि</span>
+</div>
+<div class="absolute top-4 right-4 bg-secondary/10 backdrop-blur-md px-md py-xs rounded-full border border-secondary/20">
+<span class="text-secondary-fixed font-label-md text-label-md uppercase tracking-widest">Buddhist</span>
+</div>
+</div>
+<h3 class="font-headline-md text-headline-md text-secondary-fixed mb-xs">Pali</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-md flex-grow">
+                    Associated with early Buddhist texts and punch-marked coins, often found alongside early Brahmi and local dialects.
+                </p>
+<div class="flex items-center justify-between mt-auto">
+<span class="font-label-md text-label-md text-on-tertiary-container bg-tertiary-container px-sm py-1 rounded">5th Century BCE</span>
+<button class="text-secondary-fixed flex items-center gap-xs font-label-md text-label-md group-hover:gap-sm transition-all">
+                        Learn More <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Floating Educational Widget -->
+<div class="mt-xxl glass-card rounded-xl p-lg border border-secondary/20 flex flex-col md:flex-row items-center gap-lg">
+<div class="w-24 h-24 rounded-full bg-secondary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-secondary text-[48px]">auto_stories</span>
+</div>
+<div>
+<h4 class="font-headline-md text-headline-md text-secondary mb-xs">Script Deciphering AI</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">
+                    Having trouble identifying a script on your coin? Use our AI-powered scanner to analyze calligraphic patterns and historical periods in seconds.
+                </p>
+</div>
+<button class="bg-secondary text-on-secondary px-xl py-md rounded-lg font-label-md text-label-md font-bold whitespace-nowrap hover:scale-105 transition-transform">
+                Launch Scanner
+            </button>
+</div>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 bg-surface-container-lowest/80 backdrop-blur-xl shadow-lg pb-lg pt-md px-lg">
+<div class="max-w-md mx-auto flex justify-around items-center">
+<a class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-lg py-sm Active: scale-90 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" data-weight="fill">auto_awesome_motion</span>
+<span class="font-label-md text-label-md mt-xs">Library</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-lg py-sm hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined">center_focus_strong</span>
+<span class="font-label-md text-label-md mt-xs">Scan</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-lg py-sm hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined">history</span>
+<span class="font-label-md text-label-md mt-xs">History</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-lg py-sm hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined">leaderboard</span>
+<span class="font-label-md text-label-md mt-xs">Stats</span>
+</a>
+</div>
+</nav>
+<script>
+        // Micro-interactions for hover effects
+        document.querySelectorAll('.glass-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-4px)';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0px)';
+            });
+        });
+    </script>
+</body></html>

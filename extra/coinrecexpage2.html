@@ -1,0 +1,452 @@
+//coin app user page
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NumiIT - Decoding History</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&amp;family=Playfair+Display:ital,wght@0,400..900;1,400..900&amp;family=Noto+Sans:ital,wght@0,100..900;1,100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-surface": "#e1e2e5",
+                        "surface-container-low": "#191c1e",
+                        "on-secondary-fixed": "#251a00",
+                        "error-container": "#93000a",
+                        "surface-container": "#1d2022",
+                        "on-secondary": "#3e2e00",
+                        "secondary-fixed-dim": "#e7c268",
+                        "secondary-fixed": "#ffdf96",
+                        "inverse-on-surface": "#2e3133",
+                        "tertiary": "#ffb780",
+                        "error": "#ffb4ab",
+                        "primary-container": "#1a1a2e",
+                        "on-error-container": "#ffdad6",
+                        "secondary-container": "#715600",
+                        "surface-container-high": "#282a2d",
+                        "on-primary-fixed-variant": "#45455b",
+                        "primary": "#c6c4df",
+                        "primary-fixed": "#e2e0fc",
+                        "outline-variant": "#47464c",
+                        "on-primary-fixed": "#1a1a2e",
+                        "on-error": "#690005",
+                        "on-background": "#e1e2e5",
+                        "surface-container-lowest": "#0c0f11",
+                        "on-tertiary": "#4e2600",
+                        "primary-fixed-dim": "#c6c4df",
+                        "surface-dim": "#111416",
+                        "on-tertiary-fixed-variant": "#6f3800",
+                        "on-tertiary-container": "#bb7337",
+                        "on-surface": "#e1e2e5",
+                        "background": "#111416",
+                        "secondary": "#e7c268",
+                        "tertiary-fixed-dim": "#ffb780",
+                        "inverse-primary": "#5d5c74",
+                        "tertiary-fixed": "#ffdcc4",
+                        "outline": "#929097",
+                        "on-primary-container": "#83829b",
+                        "surface-container-highest": "#323537",
+                        "surface": "#111416",
+                        "on-surface-variant": "#c8c5cd",
+                        "on-secondary-container": "#f2cd72",
+                        "surface-bright": "#37393c",
+                        "on-secondary-fixed-variant": "#5a4400",
+                        "on-tertiary-fixed": "#2f1400",
+                        "surface-variant": "#323537",
+                        "surface-tint": "#c6c4df",
+                        "on-primary": "#2f2e43",
+                        "tertiary-container": "#301500"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xl": "32px",
+                        "xxl": "48px",
+                        "md": "16px",
+                        "gutter": "16px",
+                        "container-padding": "24px",
+                        "unit": "4px",
+                        "xs": "4px",
+                        "sm": "8px",
+                        "lg": "24px"
+                    },
+                    "fontFamily": {
+                        "script-display": ["Noto Sans"],
+                        "headline-lg": ["Playfair Display"],
+                        "body-lg": ["DM Sans"],
+                        "headline-lg-mobile": ["Playfair Display"],
+                        "label-md": ["DM Sans"],
+                        "headline-md": ["Playfair Display"],
+                        "body-md": ["DM Sans"],
+                        "display-lg": ["Playfair Display"]
+                    },
+                    "fontSize": {
+                        "script-display": ["20px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "headline-lg-mobile": ["28px", {"lineHeight": "34px", "fontWeight": "600"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .parallax-bg {
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+        .glass-effect {
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotateY(0deg); }
+            50% { transform: translateY(-20px) rotateY(180deg); }
+        }
+        .animate-float {
+            animation: float 8s ease-in-out infinite;
+            perspective: 1000px;
+        }
+        .reveal-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.2, 1, 0.3, 1);
+        }
+        .reveal-active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .gold-glow {
+            box-shadow: 0 0 20px rgba(231, 194, 104, 0.2);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-background selection:bg-secondary/30 selection:text-secondary overflow-x-hidden">
+<!-- Top Navigation Anchor -->
+<header class="fixed top-0 left-0 w-full z-50 transition-all duration-300 glass-effect bg-surface/80">
+<div class="max-w-7xl mx-auto flex justify-between items-center px-lg py-md">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-secondary text-headline-md">menu</span>
+<span class="font-headline-md text-headline-md font-bold text-secondary dark:text-secondary-fixed-dim">NumiIT</span>
+</div>
+<nav class="hidden md:flex items-center gap-xl">
+<a class="font-label-md text-label-md text-secondary font-bold" href="#">Library</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-highest/20 transition-colors px-md py-xs rounded-full" href="#">Scan</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-highest/20 transition-colors px-md py-xs rounded-full" href="#">History</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-highest/20 transition-colors px-md py-xs rounded-full" href="#">Stats</a>
+</nav>
+<div class="h-10 w-10 rounded-full overflow-hidden bg-surface-container-highest">
+<img alt="User Profile Avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCkGrR1Gsr_FDQg8XUXIRNyM3MqeFOk_9bOLSWFV_uDjwmTUISGh99r1cc2yALhwFD3w2Z_4AgRpiMXSwwaMsPVBMEgoBqOK9bHjS5GAwTomlwxmd2BGwMENis6s3ZkCAH_US01XSejqvoDwRQUNy5RWElWmOlWifkr-natSpOTnQqzH1KxkNPOlh9X7JZRFk03a-nxqQK3wg9X54VTQDM5OYrTdsf1MYnhyO7iRu8tJTwS2d1MJVISOdfF7FEtZGvFPwokJO6F_Ftj"/>
+</div>
+</div>
+</header>
+<!-- Hero Section: Cinematic & Interactive -->
+<section class="relative min-h-screen flex items-center justify-center overflow-hidden pt-xxl">
+<div class="absolute inset-0 z-0">
+
+<div class="absolute inset-0 bg-gradient-to-b from-background/0 via-background/40 to-background"></div>
+</div>
+<div class="relative z-10 max-w-7xl mx-auto px-lg grid grid-cols-1 lg:grid-cols-2 gap-xxl items-center">
+<div class="space-y-xl text-center lg:text-left">
+<div class="inline-flex items-center gap-sm px-md py-xs rounded-full bg-secondary-container/20 border border-secondary/30 text-secondary-fixed-dim">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<span class="font-label-md text-xs uppercase tracking-widest">Ancient India AI Discovery</span>
+</div>
+<h1 class="font-display-lg text-display-lg text-on-surface leading-tight">
+                    Decoding <span class="text-secondary italic">History</span>, One Coin at a Time.
+                </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl mx-auto lg:mx-0">
+                    Harness advanced AI to identify, translate, and contextualize numismatic treasures. From Brahmi to Kharosthi, uncover the stories hidden in ancient metallic scripts.
+                </p>
+<div class="flex flex-col sm:flex-row gap-md justify-center lg:justify-start">
+<button class="px-xl py-md bg-secondary text-on-secondary font-label-md text-label-md rounded-lg font-bold flex items-center justify-center gap-sm hover:scale-105 active:scale-95 transition-all gold-glow">
+                        Explore Heritage
+                        <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+<button class="px-xl py-md border-2 border-secondary/50 text-secondary font-label-md text-label-md rounded-lg font-bold hover:bg-secondary/10 transition-colors">
+                        How it Works
+                    </button>
+</div>
+</div>
+<!-- Rotating 3D Coin Visualization -->
+<div class="flex justify-center items-center relative py-xxl">
+<div class="absolute w-[400px] h-[400px] bg-secondary/10 rounded-full blur-[100px]"></div>
+<div class="relative z-10 w-64 h-64 md:w-80 md:h-80 animate-float rounded-full border-4 border-secondary/20 p-2">
+<img class="w-full h-full object-cover rounded-full shadow-2xl shadow-secondary/50" data-alt="A high-resolution macro photograph of an ancient Indian gold coin from the Gupta Empire, featuring intricate embossed details of a king standing and holding a bow. The lighting is dramatic and warm, highlighting the metallic texture and weathered gold surfaces. It is set against a dark, scholarly background of deep navy and soft velvet shadows, creating a premium and historical museum exhibition feel." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBgkGuuAx7rE2YkM489Kap2vIPO_IjRTgmyF2Yeu4ITiMB8gZsHpjeckfwixufdsx4dfT3A_aEnHwQ4425a2pp5T6XP-LYKusZcSNTdop4lQgryQGJ2qn2CC5LQr5D32PAnpUgnaGrTq-sadnFOGEPDEkh70feG9lzk5c48K-fWYgnSHyAXUNcJBHUusrkp8QJHE_7GT2D3RADdDhbBAzPbOx8w2em3SQmUb6pZqxdmaAh2nL_om52c1kSEF1mFhJZVrEYiQwzZQu9S"/>
+</div>
+<!-- Interactive Metadata Tags -->
+<div class="absolute top-1/4 -right-4 glass-effect p-md rounded-xl border border-secondary/20 shadow-xl reveal-on-scroll">
+<p class="font-label-md text-secondary-fixed text-xs uppercase">Rarity</p>
+<p class="font-headline-md text-surface-bright text-lg">Legendary</p>
+</div>
+<div class="absolute bottom-1/4 -left-4 glass-effect p-md rounded-xl border border-secondary/20 shadow-xl reveal-on-scroll">
+<p class="font-label-md text-secondary-fixed text-xs uppercase">Period</p>
+<p class="font-headline-md text-surface-bright text-lg">Gupta Era</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Value Proposition / Bento Grid -->
+<section class="py-xxl bg-surface-dim">
+<div class="max-w-7xl mx-auto px-lg">
+<div class="text-center mb-xxl reveal-on-scroll">
+<h2 class="font-headline-lg text-headline-lg mb-md">Precision Meets Antiquity</h2>
+<p class="font-body-lg text-on-surface-variant max-w-2xl mx-auto">Our proprietary computer vision models are trained on centuries of scholarly numismatic archives.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter">
+<!-- Bento Item 1: High AI Tech -->
+<div class="md:col-span-8 bg-surface-container rounded-xl p-xl border border-outline-variant/30 flex flex-col md:flex-row gap-xl items-center reveal-on-scroll">
+<div class="flex-1 space-y-md">
+<span class="material-symbols-outlined text-4xl text-secondary">center_focus_strong</span>
+<h3 class="font-headline-md text-headline-md">Visual Deciphering</h3>
+<p class="font-body-md text-on-surface-variant">Real-time script detection that translates Brahmi and Kharosthi legends into modern English and Hindi instantly.</p>
+</div>
+<div class="flex-1 w-full h-48 rounded-lg overflow-hidden relative">
+<img class="w-full h-full object-cover" data-alt="A futuristic technology interface showing a high-tech scanner overlay on an ancient coin. Glowing digital lines and scanning grids in gold and teal light illuminate the metallic surface of the artifact. The background is a sophisticated digital workspace with subtle data visualizations and blue tones, representing the intersection of ancient history and cutting-edge artificial intelligence." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjYl9ygpjc7G_2ZwwEtKLlUPrlESusscyUzb4Vs3zgfuiUz-EWyWiLwcTvUo7bLv7iYLmnNNK4f0KclASG0HxgEWbS4EKcNmvz-xLfPVYgwKPH0x7JgxPc3ki34H1jF7qN7X6b8IODqS1lmqbgxAU7kBu1yYiqoua7TZio7GvDuLNhNHFKyFMSnklGvVDA3HubF_e-d4CXJp2xZJqrDgtxE23GfdeLX9-X9W9O1FTdhWJAaz0lexhY1Tf6LwkWLEBNgZ9-k6-OEz63"/>
+<div class="absolute inset-0 bg-secondary/10 flex items-center justify-center">
+<div class="w-full h-1 bg-secondary animate-pulse shadow-[0_0_15px_#e7c268]"></div>
+</div>
+</div>
+</div>
+<!-- Bento Item 2: Historical Insights -->
+<div class="md:col-span-4 bg-surface-container-high rounded-xl p-xl border border-secondary/20 flex flex-col justify-between reveal-on-scroll">
+<span class="material-symbols-outlined text-4xl text-tertiary">history_edu</span>
+<div class="mt-xxl">
+<h3 class="font-headline-md text-headline-md mb-md">Academic Veracity</h3>
+<p class="font-body-md text-on-surface-variant">Peer-reviewed database access for every identified specimen, ensuring museum-grade accuracy for collectors.</p>
+</div>
+</div>
+<!-- Bento Item 3: Global Community -->
+<div class="md:col-span-4 bg-secondary-container/10 rounded-xl p-xl border border-secondary/10 reveal-on-scroll">
+<div class="h-12 w-12 rounded-full bg-secondary-container flex items-center justify-center mb-xl">
+<span class="material-symbols-outlined text-on-secondary-container">groups</span>
+</div>
+<h3 class="font-headline-md text-headline-md mb-md">Numis Network</h3>
+<p class="font-body-md text-on-surface-variant">Connect with global experts and fellow enthusiasts to verify rare findings.</p>
+</div>
+<!-- Bento Item 4: Stats/Graph Visualization -->
+<div class="md:col-span-8 bg-surface-container rounded-xl p-xl border border-outline-variant/30 reveal-on-scroll">
+<div class="flex items-start justify-between mb-xl">
+<div>
+<h3 class="font-headline-md text-headline-md">Market Intelligence</h3>
+<p class="font-body-md text-on-surface-variant">Track value trends of historical denominations across global auctions.</p>
+</div>
+<span class="material-symbols-outlined text-4xl text-secondary">trending_up</span>
+</div>
+<div class="h-32 flex items-end gap-xs">
+<div class="flex-1 bg-secondary/20 h-[40%] rounded-t-sm transition-all hover:bg-secondary"></div>
+<div class="flex-1 bg-secondary/20 h-[60%] rounded-t-sm transition-all hover:bg-secondary"></div>
+<div class="flex-1 bg-secondary/20 h-[45%] rounded-t-sm transition-all hover:bg-secondary"></div>
+<div class="flex-1 bg-secondary/20 h-[80%] rounded-t-sm transition-all hover:bg-secondary"></div>
+<div class="flex-1 bg-secondary/20 h-[55%] rounded-t-sm transition-all hover:bg-secondary"></div>
+<div class="flex-1 bg-secondary/20 h-[95%] rounded-t-sm transition-all hover:bg-secondary"></div>
+<div class="flex-1 bg-secondary/20 h-[70%] rounded-t-sm transition-all hover:bg-secondary"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Interactive Scripts Section: Parallax Feel -->
+<section class="relative py-xxl overflow-hidden">
+<div class="parallax-bg absolute inset-0 bg-[url('https://images.unsplash.com/photo-1614728263952-84ea206f9c45?q=80&amp;w=1600&amp;auto=format&amp;fit=crop')] opacity-10" data-alt="A background texture of weathered ancient parchment or stone wall with subtle carved inscriptions in ancient scripts. The texture is rough and historical, with a dark monochromatic color scheme of charcoal and deep grays, allowing the foreground elements to pop with their golden accents."></div>
+<div class="max-w-7xl mx-auto px-lg relative z-10">
+<div class="flex flex-col lg:flex-row justify-between items-end mb-xxl gap-md reveal-on-scroll">
+<div class="max-w-xl">
+<h2 class="font-headline-lg text-headline-lg text-secondary mb-md">Did you know?</h2>
+<p class="font-body-lg text-on-surface-variant">Every inscription on a coin is a deliberate message from a king to his empire. Our AI doesn't just read the letters; it understands the intent.</p>
+</div>
+<button class="font-label-md text-label-md text-secondary border-b border-secondary pb-1 flex items-center gap-xs">
+                    View Script Library
+                    <span class="material-symbols-outlined text-sm">open_in_new</span>
+</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-xl">
+<!-- Script Card 1 -->
+<div class="group bg-surface-container rounded-xl overflow-hidden border border-outline-variant/30 hover:border-secondary/50 transition-all hover:-translate-y-2 reveal-on-scroll">
+<div class="h-48 overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="A close up shot of ancient Brahmi script carved into a sandstone pillar. The sunlight grazes the stone at a low angle, casting deep shadows within the characters and highlighting the granular texture of the stone. The color palette consists of warm ochre and sandy browns, conveying an atmospheric sense of antiquity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3qYiekcPQvZxuJRMDbOGMwwfuNV6QSTD9qYh83oe8oQmKC7Iy5buUIQ7R-fydTRof2yjRnuaFQy2FFhGyrOAlsgLhaaitCcerhzHykLFxx-lBk43cWa7n6BEOmrUZj9d9qVCs1_pK4s7llQQeuI1uYXaZRlURh5nsp-wfQRj9PbzZ24U-wngIFD-zmveo4_9CCkxBu_mvhgLKVdRvUce-X1fri1Rr11bt4KGddEKMG0idGKCJpTRgw_jqBEV5YOvd-w9qRuf4vK5Z"/>
+</div>
+<div class="p-xl space-y-md">
+<div class="flex items-center justify-between">
+<span class="px-md py-xs bg-primary-container text-secondary text-xs rounded-full font-label-md">Script Type</span>
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">stars</span>
+</div>
+<h4 class="font-headline-md text-headline-md">Brahmi Legacy</h4>
+<p class="font-body-md text-on-surface-variant">The ancestor of most Indian scripts, Brahmi was used extensively by Emperor Ashoka to spread his edicts across the subcontinent.</p>
+</div>
+</div>
+<!-- Script Card 2 -->
+<div class="group bg-surface-container rounded-xl overflow-hidden border border-outline-variant/30 hover:border-secondary/50 transition-all hover:-translate-y-2 reveal-on-scroll" style="transition-delay: 100ms">
+<div class="h-48 overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Ancient silver coins of the Kushan empire featuring Greek-inspired portraits and Kharosthi inscriptions. The coins are displayed on a dark velvet tray, with a single beam of light spotlighting the metallic luster and the complexity of the script. The style is that of a professional numismatic catalog or a private high-end collection." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBvIzOMhl5PEk4eUg7RmCjjcUIX9pSDgavtK-ReIokXFGtXFtF6q9JQDNyCDfOidaZJZDk5F8_lPZyo_IL6uhy28xsYbOOrWXXtwaDD19CZdITJXABSMQl9J1fQfzNxhb_lwgeb9cqkN_tMKuTVtDJf_2DoruyOQVq89n46lCQ2U4wO88biTxnvq6Y8NmIrA-iLlO33lQMflXVu35pU4dhZKPHX4mqxuJK2k912N-vOQcho9ccb8TdkKxcdMlWMMzo_KlU2geuB-Y7N"/>
+</div>
+<div class="p-xl space-y-md">
+<div class="flex items-center justify-between">
+<span class="px-md py-xs bg-primary-container text-secondary text-xs rounded-full font-label-md">Regional Origin</span>
+<span class="material-symbols-outlined text-secondary">location_on</span>
+</div>
+<h4 class="font-headline-md text-headline-md">Kharosthi Mystery</h4>
+<p class="font-body-md text-on-surface-variant">Written from right to left, this Indo-Bactrian script was the lingua franca of the Silk Road and Gandharan coinage.</p>
+</div>
+</div>
+<!-- Script Card 3 -->
+<div class="group bg-surface-container rounded-xl overflow-hidden border border-outline-variant/30 hover:border-secondary/50 transition-all hover:-translate-y-2 reveal-on-scroll" style="transition-delay: 200ms">
+<div class="h-48 overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="A stylized digital representation of DNA helices morphing into ancient script characters. The visualization uses golden particles on a deep midnight blue background. It represents the concept of cultural inheritance and the digital decoding of historical DNA through technology. The lighting is ethereal and glowing." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAsICERS7YKzjx5qord7hT-cHOrOyeKAY1aCwDrBMtVfNdDdlW2TqrxxGHg2IWbKDxcZLg1-xT_r4TPgWFzrchsquqyRnaeC8efTZzNtnvWimnejl1q6Luej220ESx7o7NDNj_gDEHWXP8t5TZIWo35b4hFOp0BBdqrccfY18ugfvj82tqtPVPqGfkRnTVcHl9wus-rRl4neUFYtn1S6wuyJ4brD53GOfhPo8BGCDLkDjmXC91LexrTgPV2ichgteoPT56WposiXsko"/>
+</div>
+<div class="p-xl space-y-md">
+<div class="flex items-center justify-between">
+<span class="px-md py-xs bg-primary-container text-secondary text-xs rounded-full font-label-md">AI Model</span>
+<span class="material-symbols-outlined text-secondary">psychology</span>
+</div>
+<h4 class="font-headline-md text-headline-md">Deep Learning NLP</h4>
+<p class="font-body-md text-on-surface-variant">Our models use neural networks trained on thousands of fragmented coins to predict missing script characters with 94% accuracy.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Final Call to Action -->
+<section class="py-xxl bg-surface">
+<div class="max-w-5xl mx-auto px-lg">
+<div class="relative bg-primary-container rounded-xxl p-xxl overflow-hidden reveal-on-scroll">
+<div class="absolute inset-0 z-0">
+
+</div>
+<div class="relative z-10 text-center space-y-xl">
+<h2 class="font-display-lg text-headline-lg md:text-display-lg text-secondary">Ready to start your collection?</h2>
+<p class="font-body-lg text-primary max-w-2xl mx-auto">Join the world's most advanced numismatic community. Download NumiIT today and turn your pocket into a portal to the past.</p>
+<div class="flex flex-wrap justify-center gap-md pt-md">
+<a class="bg-secondary text-on-secondary px-xxl py-md rounded-full font-label-md font-bold hover:shadow-lg hover:shadow-secondary/20 transition-all" href="#">Get the App</a>
+<a class="bg-surface/20 backdrop-blur-md text-on-surface px-xxl py-md rounded-full border border-on-surface/20 font-label-md font-bold hover:bg-surface/40 transition-all" href="#">Request a Demo</a>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Footer -->
+<footer class="bg-surface-container-lowest py-xxl mt-xxl border-t border-outline-variant/10">
+<div class="max-w-7xl mx-auto px-lg">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-xl">
+<div class="col-span-1 md:col-span-1 space-y-md">
+<span class="font-headline-md text-headline-md font-bold text-secondary">NumiIT</span>
+<p class="font-body-md text-on-surface-variant text-sm">Empowering collectors with AI to preserve and understand India's rich numismatic history.</p>
+</div>
+<div>
+<h5 class="font-label-md text-on-surface font-bold mb-md">Product</h5>
+<ul class="space-y-sm text-sm text-on-surface-variant font-body-md">
+<li><a class="hover:text-secondary" href="#">AI Scanner</a></li>
+<li><a class="hover:text-secondary" href="#">Pricing</a></li>
+<li><a class="hover:text-secondary" href="#">Museum Partners</a></li>
+</ul>
+</div>
+<div>
+<h5 class="font-label-md text-on-surface font-bold mb-md">Resources</h5>
+<ul class="space-y-sm text-sm text-on-surface-variant font-body-md">
+<li><a class="hover:text-secondary" href="#">Script Database</a></li>
+<li><a class="hover:text-secondary" href="#">API Documentation</a></li>
+<li><a class="hover:text-secondary" href="#">Collector Guide</a></li>
+</ul>
+</div>
+<div>
+<h5 class="font-label-md text-on-surface font-bold mb-md">Connect</h5>
+<div class="flex gap-md">
+<a class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center hover:bg-secondary/20 transition-colors" href="#">
+<span class="material-symbols-outlined text-on-surface-variant">share</span>
+</a>
+<a class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center hover:bg-secondary/20 transition-colors" href="#">
+<span class="material-symbols-outlined text-on-surface-variant">mail</span>
+</a>
+</div>
+</div>
+</div>
+<div class="mt-xxl pt-xl border-t border-outline-variant/10 flex flex-col md:flex-row justify-between items-center gap-md">
+<p class="font-label-md text-xs text-on-surface-variant">© 2024 NumiIT Intelligence Systems. All Rights Reserved.</p>
+<div class="flex gap-xl text-xs text-on-surface-variant font-label-md">
+<a href="#">Privacy Policy</a>
+<a href="#">Terms of Service</a>
+</div>
+</div>
+</div>
+</footer>
+<!-- Bottom Navigation for Mobile -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-lg pb-lg pt-md bg-surface-container-lowest/80 backdrop-blur-xl rounded-t-xl shadow-lg">
+<button class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-lg py-sm">
+<span class="material-symbols-outlined">auto_awesome_motion</span>
+<span class="font-label-md text-xs">Library</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant px-lg py-sm">
+<span class="material-symbols-outlined">center_focus_strong</span>
+<span class="font-label-md text-xs">Scan</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant px-lg py-sm">
+<span class="material-symbols-outlined">history</span>
+<span class="font-label-md text-xs">History</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant px-lg py-sm">
+<span class="material-symbols-outlined">leaderboard</span>
+<span class="font-label-md text-xs">Stats</span>
+</button>
+</nav>
+<script>
+        // Reveal on scroll logic
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('reveal-active');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal-on-scroll').forEach((el) => observer.observe(el));
+
+        // Sticky header transition
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 50) {
+                header.classList.add('py-sm', 'bg-surface/95');
+                header.classList.remove('py-md', 'bg-surface/80');
+            } else {
+                header.classList.add('py-md', 'bg-surface/80');
+                header.classList.remove('py-sm', 'bg-surface/95');
+            }
+        });
+
+        // Mouse parallax for 3D coin area
+        const coinArea = document.querySelector('.animate-float').parentElement;
+        coinArea.addEventListener('mousemove', (e) => {
+            const { clientX, clientY } = e;
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
+            const moveX = (clientX - centerX) / 30;
+            const moveY = (clientY - centerY) / 30;
+            
+            coinArea.querySelector('.animate-float').style.transform = `translate(${moveX}px, ${moveY}px) rotateY(${moveX}deg) rotateX(${-moveY}deg)`;
+        });
+    </script>
+</body></html>

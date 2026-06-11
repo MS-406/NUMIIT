@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NumiIT — Ancient Coin Inscription Recognition</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&family=Noto+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #1A1A2E;
+    --primary-mid: #16213E;
+    --accent: #E9C46A;
+    --accent-alt: #F4A261;
+    --surface: #F8F9FC;
+    --card: #FFFFFF;
+    --text: #1A1A2E;
+    --text-muted: #888;
+    --border: rgba(0,0,0,0.08);
+    --success: #2E7D32;
+    --success-bg: #E8F5E9;
+    --warning: #E65100;
+    --warning-bg: #FFF3E0;
+    --brahmi: #4A6CF7;
+    --kharoshthi: #9C27B0;
+    --persian: #00897B;
+    --urdu: #E91E63;
+    --arabic: #1565C0;
+    --pali: #6D4C41;
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+    --radius-full: 100px;
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.04);
+    --shadow-md: 0 4px 20px rgba(0,0,0,0.08);
+    --shadow-lg: 0 8px 40px rgba(0,0,0,0.12);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--surface); color: var(--text); min-height: 100vh; }
+
+  /* ===== TOP NAV ===== */
+  .topnav {
+    background: var(--primary);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 32px; height: 60px; position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+  }
+  .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .nav-logo { width: 34px; height: 34px; border-radius: 9px; background: rgba(233,196,106,0.15); border: 1px solid rgba(233,196,106,0.3); display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; font-weight: 800; font-size: 16px; color: var(--accent); }
+  .nav-title { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 20px; color: #fff; letter-spacing: -0.3px; }
+  .nav-links { display: flex; gap: 4px; }
+  .nav-link { padding: 7px 16px; border-radius: var(--radius-full); font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.65); cursor: pointer; transition: all 0.2s; border: none; background: none; }
+  .nav-link:hover { color: #fff; background: rgba(255,255,255,0.08); }
+  .nav-link.active { color: var(--primary); background: var(--accent); font-weight: 600; }
+  .nav-right { display: flex; align-items: center; gap: 10px; }
+  .nav-badge { font-size: 11px; background: rgba(233,196,106,0.15); color: var(--accent); border: 1px solid rgba(233,196,106,0.2); padding: 4px 10px; border-radius: var(--radius-full); font-weight: 600; }
+
+  /* ===== MAIN LAYOUT ===== */
+  .app-layout { display: flex; min-height: calc(100vh - 60px); }
+  .sidebar { width: 260px; background: var(--card); border-right: 1px solid var(--border); padding: 20px 0; flex-shrink: 0; }
+  .main-content { flex: 1; overflow: hidden; }
+
+  /* ===== SIDEBAR ===== */
+  .sidebar-section { margin-bottom: 24px; }
+  .sidebar-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.2px; color: var(--text-muted); padding: 0 20px; margin-bottom: 6px; }
+  .sidebar-item { display: flex; align-items: center; gap: 10px; padding: 10px 20px; cursor: pointer; transition: all 0.15s; border: none; background: none; width: 100%; text-align: left; }
+  .sidebar-item:hover { background: var(--surface); }
+  .sidebar-item.active { background: rgba(26,26,46,0.06); }
+  .sidebar-item.active .si-icon { background: var(--primary); }
+  .sidebar-item.active .si-icon svg { color: var(--accent); }
+  .sidebar-item.active .si-text { color: var(--primary); font-weight: 600; }
+  .si-icon { width: 34px; height: 34px; border-radius: var(--radius-sm); background: var(--surface); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.15s; }
+  .si-icon svg { width: 16px; height: 16px; color: var(--text-muted); }
+  .si-text { font-size: 13px; font-weight: 500; color: #444; }
+  .si-count { margin-left: auto; font-size: 11px; background: var(--surface); color: var(--text-muted); padding: 2px 7px; border-radius: var(--radius-full); font-weight: 600; }
+  .sidebar-divider { height: 1px; background: var(--border); margin: 8px 20px; }
+  .script-indicator { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-left: auto; }
+
+  /* ===== SCREEN PANELS ===== */
+  .screen { display: none; height: calc(100vh - 60px); overflow-y: auto; }
+  .screen.active { display: block; }
+
+  /* ===== HOME SCREEN ===== */
+  .home-hero {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-mid) 100%);
+    padding: 40px 40px 48px; color: #fff; position: relative; overflow: hidden;
+  }
+  .home-hero::before {
+    content: ''; position: absolute; top: -60px; right: -60px;
+    width: 300px; height: 300px; border-radius: 50%;
+    background: rgba(233,196,106,0.05); border: 1px solid rgba(233,196,106,0.1);
+  }
+  .home-hero::after {
+    content: ''; position: absolute; bottom: -40px; right: 100px;
+    width: 180px; height: 180px; border-radius: 50%;
+    background: rgba(233,196,106,0.04); border: 1px solid rgba(233,196,106,0.08);
+  }
+  .hero-eyebrow { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: var(--accent); margin-bottom: 10px; }
+  .hero-title { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 700; line-height: 1.2; margin-bottom: 10px; letter-spacing: -0.5px; }
+  .hero-sub { font-size: 14px; color: rgba(255,255,255,0.6); max-width: 480px; line-height: 1.6; margin-bottom: 28px; }
+  .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+  .btn-gold { background: var(--accent); color: var(--primary); border: none; padding: 13px 28px; border-radius: var(--radius-md); font-weight: 700; font-size: 14px; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px; }
+  .btn-gold:hover { background: #f0ce7a; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(233,196,106,0.4); }
+  .btn-ghost { background: rgba(255,255,255,0.08); color: #fff; border: 1px solid rgba(255,255,255,0.15); padding: 12px 24px; border-radius: var(--radius-md); font-weight: 500; font-size: 14px; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px; }
+  .btn-ghost:hover { background: rgba(255,255,255,0.14); }
+  .hero-stats { display: flex; gap: 32px; margin-top: 32px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.1); }
+  .hs-item { text-align: center; }
+  .hs-num { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 700; color: var(--accent); }
+  .hs-label { font-size: 11px; color: rgba(255,255,255,0.5); margin-top: 2px; }
+
+  /* Quick actions */
+  .section-pad { padding: 28px 32px; }
+  .section-title { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; }
+  .section-link { font-size: 13px; font-weight: 500; color: var(--brahmi); cursor: pointer; font-family: 'DM Sans', sans-serif; }
+  .quick-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .quick-card { background: var(--card); border-radius: var(--radius-lg); padding: 20px 16px; text-align: center; box-shadow: var(--shadow-sm); cursor: pointer; transition: all 0.2s; border: 1px solid var(--border); }
+  .quick-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+  .qc-icon { width: 48px; height: 48px; border-radius: var(--radius-md); margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+  .qc-title { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
+  .qc-desc { font-size: 11px; color: var(--text-muted); }
+
+  /* Recent scans */
+  .recent-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .recent-card { background: var(--card); border-radius: var(--radius-lg); padding: 14px; display: flex; align-items: center; gap: 12px; box-shadow: var(--shadow-sm); cursor: pointer; transition: all 0.2s; border: 1px solid var(--border); }
+  .recent-card:hover { transform: translateX(2px); box-shadow: var(--shadow-md); }
+  .rc-thumb { width: 52px; height: 52px; border-radius: var(--radius-md); background: var(--surface); display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
+  .rc-info { flex: 1; min-width: 0; }
+  .rc-script { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 2px; }
+  .rc-text { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .rc-sub { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+  .conf-badge { font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px; flex-shrink: 0; }
+  .conf-high { background: var(--success-bg); color: var(--success); }
+  .conf-med { background: var(--warning-bg); color: var(--warning); }
+
+  /* ===== SCAN SCREEN ===== */
+  .scan-layout { display: grid; grid-template-columns: 1fr 380px; gap: 0; height: calc(100vh - 60px); }
+  .camera-area { background: #0a0a0f; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
+  .camera-mock { width: 380px; height: 380px; position: relative; }
+  .cam-frame { width: 100%; height: 100%; background: rgba(255,255,255,0.03); border-radius: 20px; position: relative; display: flex; align-items: center; justify-content: center; }
+  .cam-inner { width: 300px; height: 300px; border-radius: 50%; border: 2px dashed rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; position: relative; }
+  .cam-inner::before { content: ''; position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 2px solid rgba(233,196,106,0.3); animation: camPulse 2s ease-in-out infinite; }
+  @keyframes camPulse { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.04); opacity: 0.5; } }
+  .cam-placeholder { text-align: center; color: rgba(255,255,255,0.3); }
+  .cam-placeholder svg { width: 52px; height: 52px; margin-bottom: 10px; }
+  .cam-placeholder p { font-size: 13px; }
+  /* Corner brackets */
+  .corner { position: absolute; width: 36px; height: 36px; border-color: var(--accent); border-style: solid; }
+  .corner.tl { top: 0; left: 0; border-width: 3px 0 0 3px; border-radius: 4px 0 0 0; }
+  .corner.tr { top: 0; right: 0; border-width: 3px 3px 0 0; border-radius: 0 4px 0 0; }
+  .corner.bl { bottom: 0; left: 0; border-width: 0 0 3px 3px; border-radius: 0 0 0 4px; }
+  .corner.br { bottom: 0; right: 0; border-width: 0 3px 3px 0; border-radius: 0 0 4px 0; }
+  .scan-line { position: absolute; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, var(--accent), transparent); animation: scanLine 2.5s linear infinite; top: 0; }
+  @keyframes scanLine { 0% { top: 0%; opacity: 1; } 90% { top: 100%; opacity: 1; } 100% { top: 100%; opacity: 0; } }
+
+  .cam-top { position: absolute; top: 20px; left: 20px; right: 20px; display: flex; justify-content: space-between; align-items: center; }
+  .cam-btn { background: rgba(255,255,255,0.1); border: none; color: #fff; border-radius: var(--radius-full); padding: 8px 14px; font-size: 12px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 6px; }
+  .cam-btn svg { width: 14px; height: 14px; }
+  .cam-bottom { position: absolute; bottom: 30px; display: flex; align-items: center; gap: 32px; }
+  .shutter { width: 68px; height: 68px; border-radius: 50%; border: 4px solid rgba(255,255,255,0.7); background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+  .shutter:hover { border-color: #fff; }
+  .shutter:active { transform: scale(0.93); }
+  .shutter-inner { width: 52px; height: 52px; border-radius: 50%; background: #fff; transition: all 0.15s; }
+  .shutter:hover .shutter-inner { background: var(--accent); }
+  .cam-side-btn { width: 48px; height: 48px; border-radius: var(--radius-md); background: rgba(255,255,255,0.08); border: none; color: rgba(255,255,255,0.6); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; flex-direction: column; gap: 2px; transition: all 0.15s; }
+  .cam-side-btn:hover { background: rgba(255,255,255,0.14); color: #fff; }
+  .cam-side-btn svg { width: 18px; height: 18px; }
+  .cam-mode-bar { position: absolute; bottom: 110px; display: flex; gap: 6px; }
+  .mode-chip { padding: 6px 14px; border-radius: var(--radius-full); font-size: 12px; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; }
+  .mode-chip.active { background: var(--accent); color: var(--primary); }
+  .mode-chip:not(.active) { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.6); }
+
+  /* Scan panel */
+  .scan-panel { background: var(--card); padding: 28px; overflow-y: auto; border-left: 1px solid var(--border); display: flex; flex-direction: column; gap: 20px; }
+  .scan-panel-title { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; }
+  .tip-card { background: rgba(233,196,106,0.08); border: 1px solid rgba(233,196,106,0.2); border-radius: var(--radius-md); padding: 14px; }
+  .tip-title { font-size: 12px; font-weight: 600; color: #b8943e; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+  .tip-title svg { width: 14px; height: 14px; }
+  .tip-list { list-style: none; }
+  .tip-list li { font-size: 12px; color: #666; padding: 3px 0; display: flex; align-items: center; gap: 6px; }
+  .tip-list li::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+  .settings-group { }
+  .sg-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); margin-bottom: 10px; }
+  .toggle-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); }
+  .toggle-row:last-child { border-bottom: none; }
+  .tr-label { font-size: 13px; font-weight: 500; }
+  .toggle { width: 36px; height: 20px; background: #ddd; border-radius: 10px; cursor: pointer; position: relative; border: none; transition: all 0.2s; }
+  .toggle.on { background: var(--primary); }
+  .toggle::after { content: ''; position: absolute; width: 14px; height: 14px; background: #fff; border-radius: 50%; top: 3px; left: 3px; transition: all 0.2s; }
+  .toggle.on::after { left: 19px; }
+  .gallery-btn { width: 100%; padding: 13px; border-radius: var(--radius-md); border: 2px dashed rgba(26,26,46,0.15); background: var(--surface); font-size: 13px; font-weight: 500; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; }
+  .gallery-btn:hover { border-color: var(--primary); color: var(--primary); background: rgba(26,26,46,0.03); }
+  .gallery-btn svg { width: 18px; height: 18px; }
+
+  /* ===== RESULT SCREEN ===== */
+  .result-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 0; height: calc(100vh - 60px); }
+  .result-left { background: #111; position: relative; overflow: hidden; display: flex; flex-direction: column; }
+  .result-img-area { flex: 1; display: flex; align-items: center; justify-content: center; padding: 32px; position: relative; }
+  .coin-preview-card { width: 280px; height: 280px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #3a3a3a, #1a1a1a); border: 3px solid #333; display: flex; align-items: center; justify-content: center; font-size: 100px; position: relative; box-shadow: 0 0 60px rgba(233,196,106,0.15); }
+  .coin-badge { position: absolute; top: -10px; right: -10px; background: rgba(26,26,46,0.9); color: var(--accent); padding: 6px 14px; border-radius: var(--radius-full); font-size: 12px; font-weight: 700; border: 1px solid rgba(233,196,106,0.3); }
+  .result-actions-bar { padding: 20px 28px; display: flex; gap: 10px; background: rgba(255,255,255,0.03); border-top: 1px solid rgba(255,255,255,0.06); }
+  .btn-primary-sm { flex: 1; background: var(--accent); color: var(--primary); border: none; padding: 12px; border-radius: var(--radius-md); font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 7px; transition: all 0.2s; }
+  .btn-primary-sm:hover { background: #f0ce7a; }
+  .btn-secondary-sm { flex: 1; background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.8); border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: var(--radius-md); font-size: 13px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 7px; transition: all 0.2s; }
+  .btn-secondary-sm:hover { background: rgba(255,255,255,0.14); }
+
+  .result-right { padding: 28px; overflow-y: auto; }
+  .result-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+  .result-title { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; }
+  .share-pill { background: var(--surface); border: 1px solid var(--border); padding: 7px 14px; border-radius: var(--radius-full); font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; color: var(--text); transition: all 0.2s; }
+  .share-pill:hover { background: #eee; }
+  .share-pill svg { width: 13px; height: 13px; }
+
+  /* Result tabs */
+  .rtabs { display: flex; background: var(--surface); border-radius: var(--radius-md); padding: 3px; margin-bottom: 18px; }
+  .rtab { flex: 1; text-align: center; padding: 9px; font-size: 13px; font-weight: 500; border-radius: 9px; cursor: pointer; color: var(--text-muted); transition: all 0.2s; border: none; background: transparent; }
+  .rtab.active { background: var(--card); color: var(--text); font-weight: 600; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+
+  /* Result fields */
+  .rfield { background: var(--card); border-radius: var(--radius-md); padding: 16px; margin-bottom: 10px; border: 1px solid var(--border); }
+  .rf-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); margin-bottom: 6px; }
+  .rf-value { font-size: 15px; font-weight: 600; color: var(--text); }
+  .rf-value.script { font-family: 'Noto Sans', sans-serif; font-size: 24px; letter-spacing: 2px; }
+  .conf-track { flex: 1; height: 7px; background: #eee; border-radius: 4px; overflow: hidden; }
+  .conf-fill { height: 100%; border-radius: 4px; transition: width 0.6s ease; }
+  .conf-fill.high { background: linear-gradient(90deg, #4caf50, #66bb6a); }
+  .conf-fill.med { background: linear-gradient(90deg, #ff9800, #ffa726); }
+  .conf-row { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
+  .conf-pct { font-size: 14px; font-weight: 700; }
+  .dynasty-pill { display: inline-flex; align-items: center; gap: 6px; background: rgba(26,26,46,0.06); padding: 5px 12px; border-radius: var(--radius-full); font-size: 12px; font-weight: 500; margin-top: 6px; }
+  .dynasty-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+
+  /* Tab content panels */
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+  .glyph-row { display: flex; align-items: center; padding: 10px 14px; border-radius: var(--radius-md); margin-bottom: 6px; background: var(--card); border: 1px solid var(--border); gap: 14px; }
+  .glyph-char { font-family: 'Noto Sans', sans-serif; font-size: 22px; width: 36px; text-align: center; }
+  .glyph-name { font-size: 13px; font-weight: 600; }
+  .glyph-roman { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .glyph-index { margin-left: auto; font-size: 11px; color: var(--text-muted); }
+
+  /* ===== HISTORY SCREEN ===== */
+  .history-layout { padding: 28px 32px; }
+  .hist-topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+  .hist-title-row { }
+  .hist-main-title { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700; }
+  .hist-sub { font-size: 13px; color: var(--text-muted); margin-top: 3px; }
+  .hist-export-btn { background: var(--primary); color: #fff; border: none; padding: 10px 20px; border-radius: var(--radius-md); font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 7px; transition: all 0.2s; }
+  .hist-export-btn:hover { background: #2a2a3e; }
+  .hist-export-btn svg { width: 15px; height: 15px; }
+  .search-bar { display: flex; align-items: center; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 0 14px; gap: 10px; margin-bottom: 14px; }
+  .search-bar svg { width: 16px; height: 16px; color: var(--text-muted); flex-shrink: 0; }
+  .search-bar input { flex: 1; border: none; outline: none; font-family: 'DM Sans', sans-serif; font-size: 14px; padding: 12px 0; background: transparent; }
+  .filter-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+  .filter-chip { padding: 7px 14px; border-radius: var(--radius-full); font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid var(--border); background: var(--card); color: #555; transition: all 0.15s; }
+  .filter-chip.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+  .filter-chip:hover:not(.active) { border-color: var(--primary); color: var(--primary); }
+
+  /* Stats row */
+  .stat-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
+  .stat-card { background: var(--card); border-radius: var(--radius-md); padding: 16px; border: 1px solid var(--border); text-align: center; }
+  .sc-num { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 700; color: var(--primary); }
+  .sc-label { font-size: 11px; color: var(--text-muted); margin-top: 3px; font-weight: 500; }
+
+  /* History table */
+  .hist-table-wrap { background: var(--card); border-radius: var(--radius-lg); border: 1px solid var(--border); overflow: hidden; }
+  .hist-table { width: 100%; border-collapse: collapse; }
+  .hist-table thead th { padding: 12px 16px; text-align: left; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); background: var(--surface); border-bottom: 1px solid var(--border); }
+  .hist-table tbody tr { border-bottom: 1px solid var(--border); transition: background 0.15s; cursor: pointer; }
+  .hist-table tbody tr:last-child { border-bottom: none; }
+  .hist-table tbody tr:hover { background: var(--surface); }
+  .hist-table td { padding: 14px 16px; font-size: 13px; vertical-align: middle; }
+  .td-thumb { width: 42px; height: 42px; border-radius: 10px; background: var(--surface); display: flex; align-items: center; justify-content: center; font-size: 20px; }
+  .td-script-tag { display: inline-block; padding: 3px 9px; border-radius: 5px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+  .td-text { font-weight: 600; }
+  .td-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+  .td-date { color: var(--text-muted); }
+  .row-actions { display: flex; gap: 6px; opacity: 0; transition: opacity 0.15s; }
+  .hist-table tbody tr:hover .row-actions { opacity: 1; }
+  .row-btn { width: 28px; height: 28px; border-radius: 6px; border: 1px solid var(--border); background: var(--card); cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-muted); transition: all 0.15s; }
+  .row-btn:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
+  .row-btn svg { width: 13px; height: 13px; }
+
+  /* ===== ENCYCLOPEDIA SCREEN ===== */
+  .enc-layout { padding: 28px 32px; }
+  .enc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 20px; }
+  .enc-card { background: var(--card); border-radius: var(--radius-lg); padding: 22px; border: 1px solid var(--border); cursor: pointer; transition: all 0.2s; }
+  .enc-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+  .enc-script-badge { display: inline-block; padding: 4px 12px; border-radius: var(--radius-full); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 14px; }
+  .enc-script-name { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+  .enc-native { font-family: 'Noto Sans', sans-serif; font-size: 14px; color: var(--text-muted); margin-bottom: 12px; }
+  .enc-period { font-size: 12px; color: var(--text-muted); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+  .enc-period svg { width: 13px; height: 13px; }
+  .enc-divider { height: 1px; background: var(--border); margin: 12px 0; }
+  .enc-sample { font-family: 'Noto Sans', sans-serif; font-size: 20px; letter-spacing: 3px; margin-bottom: 4px; }
+  .enc-translation { font-size: 12px; color: var(--text-muted); font-style: italic; }
+
+  /* ===== SETTINGS SCREEN ===== */
+  .settings-layout { max-width: 720px; padding: 32px; margin: 0 auto; }
+  .settings-group-card { background: var(--card); border-radius: var(--radius-lg); border: 1px solid var(--border); overflow: hidden; margin-bottom: 20px; }
+  .sgc-header { padding: 16px 20px; border-bottom: 1px solid var(--border); font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 8px; }
+  .sgc-header svg { width: 16px; height: 16px; color: var(--text-muted); }
+  .sgc-row { padding: 14px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .sgc-row:last-child { border-bottom: none; }
+  .sgc-label { font-size: 14px; font-weight: 500; }
+  .sgc-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .sgc-select { border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px; font-family: 'DM Sans', sans-serif; font-size: 13px; background: var(--surface); cursor: pointer; }
+  .danger-btn { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+  .danger-btn:hover { background: #fee2e2; }
+  .version-tag { text-align: center; font-size: 12px; color: var(--text-muted); margin-top: 24px; }
+
+  /* ===== TOAST ===== */
+  .toast { position: fixed; bottom: 28px; right: 28px; background: var(--primary); color: #fff; padding: 12px 20px; border-radius: var(--radius-md); font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); transform: translateY(80px); opacity: 0; transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); pointer-events: none; z-index: 1000; }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast svg { width: 16px; height: 16px; color: var(--accent); }
+
+  /* ===== DETECTION OVERLAY ===== */
+  .detection-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 200; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+  .detection-overlay.show { opacity: 1; pointer-events: all; }
+  .detection-modal { background: var(--card); border-radius: 24px; padding: 28px; width: 500px; max-width: 90vw; }
+  .dm-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+  .dm-title { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; }
+  .dm-close { width: 32px; height: 32px; border-radius: 50%; border: none; background: var(--surface); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; color: var(--text-muted); }
+  .step-progress { display: flex; gap: 6px; margin-bottom: 20px; }
+  .step-item { flex: 1; }
+  .step-label { font-size: 11px; color: var(--text-muted); margin-bottom: 6px; }
+  .step-bar { height: 4px; background: #eee; border-radius: 2px; overflow: hidden; }
+  .step-fill { height: 100%; background: var(--accent); border-radius: 2px; width: 0; transition: width 0.8s ease; }
+  .step-fill.done { width: 100%; background: var(--success); }
+  .step-fill.active { width: 60%; background: var(--accent); animation: stepPulse 1s ease infinite; }
+  @keyframes stepPulse { 0%,100% { width: 60%; } 50% { width: 75%; } }
+  .dm-region { background: var(--surface); border-radius: var(--radius-md); padding: 14px; margin-bottom: 10px; display: flex; align-items: center; gap: 14px; }
+  .dm-region-icon { width: 42px; height: 42px; border-radius: var(--radius-md); background: rgba(233,196,106,0.12); border: 1px solid rgba(233,196,106,0.2); display: flex; align-items: center; justify-content: center; font-size: 20px; font-family: 'Noto Sans', sans-serif; }
+  .dm-region-info { flex: 1; }
+  .dm-region-script { font-size: 13px; font-weight: 600; }
+  .dm-region-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+  .dm-conf { font-size: 15px; font-weight: 700; }
+  .dm-action { width: 100%; margin-top: 16px; padding: 14px; border-radius: var(--radius-md); background: var(--primary); color: #fff; border: none; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+  .dm-action:hover { background: #2a2a3e; }
+  .dm-action:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* Mobile responsive */
+  @media (max-width: 900px) {
+    .scan-layout, .result-layout { grid-template-columns: 1fr; }
+    .quick-grid { grid-template-columns: repeat(2, 1fr); }
+    .enc-grid { grid-template-columns: repeat(2, 1fr); }
+    .stat-cards { grid-template-columns: repeat(2, 1fr); }
+    .recent-grid { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .nav-links { display: none; }
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="topnav">
+  <a class="nav-brand" href="#">
+    <div class="nav-logo">N</div>
+    <span class="nav-title">NumiIT</span>
+  </a>
+  <div class="nav-links">
+    <button class="nav-link active" onclick="showScreen('home',this)">Home</button>
+    <button class="nav-link" onclick="showScreen('scan',this)">Scan</button>
+    <button class="nav-link" onclick="showScreen('history',this)">History</button>
+    <button class="nav-link" onclick="showScreen('encyclopedia',this)">Encyclopedia</button>
+    <button class="nav-link" onclick="showScreen('settings',this)">Settings</button>
+  </div>
+  <div class="nav-right">
+    <span class="nav-badge">Phase 1 · 6 Scripts</span>
+  </div>
+</nav>
+
+<!-- MAIN LAYOUT -->
+<div class="app-layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Navigation</div>
+      <button class="sidebar-item active" onclick="showScreen('home',null,'home-si')">
+        <div class="si-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12L12 3l9 9"/><path d="M9 21V12h6v9"/></svg></div>
+        <span class="si-text">Home</span>
+      </button>
+      <button class="sidebar-item" onclick="showScreen('scan',null,'scan-si')">
+        <div class="si-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M2 12C2 6.48 6.48 2 12 2s10 4.48 10 10-4.48 10-10 10S2 17.52 2 12z" opacity=".3"/><path d="M12 8v1M12 15v1M8 12h1M15 12h1"/></svg></div>
+        <span class="si-text">Scan Coin</span>
+      </button>
+      <button class="sidebar-item" onclick="showScreen('history',null,'hist-si')">
+        <div class="si-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><polyline points="12,7 12,12 15,15"/></svg></div>
+        <span class="si-text">History</span>
+        <span class="si-count">12</span>
+      </button>
+      <button class="sidebar-item" onclick="showScreen('encyclopedia',null,'enc-si')">
+        <div class="si-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg></div>
+        <span class="si-text">Encyclopedia</span>
+      </button>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Scripts</div>
+      <button class="sidebar-item" onclick="filterScript('Brahmi')">
+        <div class="si-icon" style="background:#e8ebff"><svg viewBox="0 0 24 24" fill="none" stroke="#4a6cf7" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M8 12h8M12 8v8"/></svg></div>
+        <span class="si-text">Brahmi</span>
+        <span class="script-indicator" style="background:#4a6cf7"></span>
+      </button>
+      <button class="sidebar-item" onclick="filterScript('Kharoshthi')">
+        <div class="si-icon" style="background:#f3e5f5"><svg viewBox="0 0 24 24" fill="none" stroke="#9c27b0" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9 9l6 6M15 9l-6 6"/></svg></div>
+        <span class="si-text">Kharoshthi</span>
+        <span class="script-indicator" style="background:#9c27b0"></span>
+      </button>
+      <button class="sidebar-item" onclick="filterScript('Persian')">
+        <div class="si-icon" style="background:#e0f2f1"><svg viewBox="0 0 24 24" fill="none" stroke="#00897b" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg></div>
+        <span class="si-text">Persian</span>
+        <span class="script-indicator" style="background:#00897b"></span>
+      </button>
+      <button class="sidebar-item" onclick="filterScript('Arabic')">
+        <div class="si-icon" style="background:#e3f2fd"><svg viewBox="0 0 24 24" fill="none" stroke="#1565c0" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M8 9h8M8 12h6M8 15h4"/></svg></div>
+        <span class="si-text">Arabic</span>
+        <span class="script-indicator" style="background:#1565c0"></span>
+      </button>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Tools</div>
+      <button class="sidebar-item" onclick="showScreen('settings',null,'set-si')">
+        <div class="si-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg></div>
+        <span class="si-text">Settings</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- SCREENS -->
+
+  <!-- HOME -->
+  <div class="screen active" id="screen-home">
+    <div class="home-hero">
+      <div class="hero-eyebrow">AI-Powered Numismatic Research</div>
+      <div class="hero-title">Decode Ancient Coin<br>Inscriptions Instantly</div>
+      <div class="hero-sub">Upload or scan any ancient Indian coin and our ML engine identifies the script, transliterates, and translates inscriptions from 6 historical writing systems.</div>
+      <div class="hero-actions">
+        <button class="btn-gold" onclick="showScreen('scan')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="3"/><path d="M2 12C2 6.48 6.48 2 12 2s10 4.48 10 10-4.48 10-10 10S2 17.52 2 12z"/></svg>
+          Scan a Coin
+        </button>
+        <button class="btn-ghost" onclick="showScreen('history')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><polyline points="12,7 12,12 15,15"/></svg>
+          Browse History
+        </button>
+      </div>
+      <div class="hero-stats">
+        <div class="hs-item"><div class="hs-num">6</div><div class="hs-label">Scripts Supported</div></div>
+        <div class="hs-item"><div class="hs-num">&lt;3s</div><div class="hs-label">Detection Time</div></div>
+        <div class="hs-item"><div class="hs-num">100%</div><div class="hs-label">Offline Ready</div></div>
+        <div class="hs-item"><div class="hs-num">12</div><div class="hs-label">Scans This Week</div></div>
+      </div>
+    </div>
+
+    <div class="section-pad">
+      <div class="section-title">
+        Quick Actions
+        <span class="section-link" onclick="showScreen('scan')">Open Scanner →</span>
+      </div>
+      <div class="quick-grid">
+        <div class="quick-card" onclick="showScreen('scan')">
+          <div class="qc-icon" style="background:#fff7e0">📷</div>
+          <div class="qc-title">Camera Scan</div>
+          <div class="qc-desc">Use live camera to capture coins</div>
+        </div>
+        <div class="quick-card" onclick="simulateGallery()">
+          <div class="qc-icon" style="background:#e8f5e9">🖼️</div>
+          <div class="qc-title">Import Image</div>
+          <div class="qc-desc">Upload from your gallery</div>
+        </div>
+        <div class="quick-card" onclick="showScreen('encyclopedia')">
+          <div class="qc-icon" style="background:#e8ebff">📚</div>
+          <div class="qc-title">Encyclopedia</div>
+          <div class="qc-desc">Browse all 6 scripts</div>
+        </div>
+        <div class="quick-card" onclick="exportHistory()">
+          <div class="qc-icon" style="background:#f3e5f5">📊</div>
+          <div class="qc-title">Export Data</div>
+          <div class="qc-desc">Download scan history as CSV</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-pad" style="padding-top:0">
+      <div class="section-title">
+        Recent Scans
+        <span class="section-link" onclick="showScreen('history')">See All →</span>
+      </div>
+      <div class="recent-grid" id="recent-scans"></div>
+    </div>
+  </div>
+
+  <!-- SCAN -->
+  <div class="screen" id="screen-scan">
+    <div class="scan-layout">
+      <div class="camera-area">
+        <div class="cam-top">
+          <button class="cam-btn" onclick="showScreen('home')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            Back
+          </button>
+          <button class="cam-btn" id="flash-btn" onclick="toggleFlash()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13,2 3,14 12,14 11,22 21,10 12,10 13,2"/></svg>
+            <span id="flash-label">Flash Off</span>
+          </button>
+          <button class="cam-btn" onclick="toggleGrid()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/></svg>
+            Grid
+          </button>
+        </div>
+
+        <div class="camera-mock">
+          <div class="cam-frame">
+            <div class="corner tl"></div>
+            <div class="corner tr"></div>
+            <div class="corner bl"></div>
+            <div class="corner br"></div>
+            <div class="scan-line"></div>
+            <div class="cam-inner">
+              <div class="cam-placeholder">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color:rgba(255,255,255,0.2)"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg>
+                <p>Position coin in frame</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="cam-mode-bar">
+          <button class="mode-chip active">Single Coin</button>
+          <button class="mode-chip" onclick="showToast('Batch mode coming in Phase 2')">Batch Scan</button>
+          <button class="mode-chip" onclick="simulateGallery()">Gallery</button>
+        </div>
+
+        <div class="cam-bottom">
+          <button class="cam-side-btn" onclick="showScreen('history')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg>
+            <span style="font-size:10px; color:rgba(255,255,255,0.5)">History</span>
+          </button>
+          <button class="shutter" onclick="triggerScan()">
+            <div class="shutter-inner"></div>
+          </button>
+          <button class="cam-side-btn" onclick="showToast('Camera flipped')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7h-9M14 17H5M17 4l3 3-3 3M7 14l-3 3 3 3"/></svg>
+            <span style="font-size:10px; color:rgba(255,255,255,0.5)">Flip</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="scan-panel">
+        <div class="scan-panel-title">Scan Settings</div>
+
+        <div class="tip-card">
+          <div class="tip-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            Tips for Best Results
+          </div>
+          <ul class="tip-list">
+            <li>Use bright, even lighting — avoid harsh shadows</li>
+            <li>Hold the coin flat and fill the frame</li>
+            <li>Keep the camera steady — use a surface if needed</li>
+            <li>Clean the coin surface before scanning</li>
+            <li>Try both obverse and reverse sides</li>
+          </ul>
+        </div>
+
+        <div class="settings-group">
+          <div class="sg-label">Camera Options</div>
+          <div class="toggle-row">
+            <span class="tr-label">Auto-focus</span>
+            <button class="toggle on" id="tog-af" onclick="toggleBtn(this)"></button>
+          </div>
+          <div class="toggle-row">
+            <span class="tr-label">Grid overlay</span>
+            <button class="toggle" id="tog-grid" onclick="toggleBtn(this)"></button>
+          </div>
+          <div class="toggle-row">
+            <span class="tr-label">Sharpness check</span>
+            <button class="toggle on" id="tog-sharp" onclick="toggleBtn(this)"></button>
+          </div>
+          <div class="toggle-row">
+            <span class="tr-label">Auto-save results</span>
+            <button class="toggle on" id="tog-save" onclick="toggleBtn(this)"></button>
+          </div>
+        </div>
+
+        <button class="gallery-btn" onclick="simulateGallery()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg>
+          Import from Gallery
+        </button>
+
+        <div style="font-size:12px; color:var(--text-muted); text-align:center; padding-top:4px">
+          Supported: JPG, PNG, HEIC · Max 20MB
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULT -->
+  <div class="screen" id="screen-result">
+    <div class="result-layout">
+      <div class="result-left">
+        <div class="result-img-area">
+          <div class="coin-preview-card">
+            🪙
+            <div class="coin-badge" id="result-badge">Brahmi · 92%</div>
+          </div>
+        </div>
+        <div class="result-actions-bar">
+          <button class="btn-primary-sm" onclick="saveScan()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17,21 17,13 7,13 7,21"/><polyline points="7,3 7,8 15,8"/></svg>
+            Save to History
+          </button>
+          <button class="btn-secondary-sm" onclick="showScreen('scan')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1,4 1,10 7,10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
+            Scan Again
+          </button>
+        </div>
+      </div>
+
+      <div class="result-right">
+        <div class="result-header-row">
+          <div class="result-title">Translation Result</div>
+          <button class="share-pill" onclick="showToast('Copied to clipboard!')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+            Share
+          </button>
+        </div>
+
+        <div class="rtabs">
+          <button class="rtab active" onclick="switchTab('translation',this)">Translation</button>
+          <button class="rtab" onclick="switchTab('transliteration',this)">Transliteration</button>
+          <button class="rtab" onclick="switchTab('details',this)">Details</button>
+        </div>
+
+        <div class="tab-panel active" id="tab-translation">
+          <div class="rfield">
+            <div class="rf-label">Detected Script</div>
+            <div class="rf-value" id="res-script">Brahmi (ब्राह्मी)</div>
+          </div>
+          <div class="rfield">
+            <div class="rf-label">Original Inscription</div>
+            <div class="rf-value script" id="res-original">𑀫𑀳𑀸𑀭𑀸𑀚</div>
+          </div>
+          <div class="rfield">
+            <div class="rf-label">Transliteration</div>
+            <div class="rf-value" id="res-translit">Mahārāja</div>
+          </div>
+          <div class="rfield">
+            <div class="rf-label">English Translation</div>
+            <div class="rf-value" id="res-translation">Great King</div>
+            <div class="dynasty-pill">
+              <div class="dynasty-dot"></div>
+              <span id="res-dynasty">Kushan Empire · 1st–3rd century CE</span>
+            </div>
+          </div>
+          <div class="rfield">
+            <div class="rf-label">Confidence</div>
+            <div class="conf-row">
+              <div class="conf-track"><div class="conf-fill high" id="conf-bar" style="width:92%"></div></div>
+              <div class="conf-pct" id="conf-pct" style="color:var(--success)">92%</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-panel" id="tab-transliteration">
+          <div class="rfield">
+            <div class="rf-label">Romanized Transliteration</div>
+            <div class="rf-value" style="font-size:28px; font-family:'Playfair Display',serif; font-weight:400; letter-spacing:1px">Mahārāja</div>
+          </div>
+          <div class="rfield">
+            <div class="rf-label">IPA Pronunciation</div>
+            <div class="rf-value">/məˈhaːraːdʒ/</div>
+          </div>
+          <div class="rfield">
+            <div class="rf-label">Script Family</div>
+            <div class="rf-value">Brahmic — Abugida writing system</div>
+            <div style="font-size:12px; color:var(--text-muted); margin-top:6px; line-height:1.6">Brahmi is one of the oldest writing systems used in ancient India, dating from at least the 3rd century BCE. It is the ancestor of most modern South Asian scripts.</div>
+          </div>
+        </div>
+
+        <div class="tab-panel" id="tab-details">
+          <div style="font-size:12px; color:var(--text-muted); margin-bottom:12px; font-weight:500">Glyph-by-glyph breakdown · 6 characters</div>
+          <div class="glyph-row"><div class="glyph-char">𑀫</div><div><div class="glyph-name">Ma</div><div class="glyph-roman">Brahmi letter MA</div></div><div class="glyph-index">#1</div></div>
+          <div class="glyph-row"><div class="glyph-char">𑀳</div><div><div class="glyph-name">Ha</div><div class="glyph-roman">Brahmi letter HA</div></div><div class="glyph-index">#2</div></div>
+          <div class="glyph-row"><div class="glyph-char">𑀸</div><div><div class="glyph-name">ā (vowel)</div><div class="glyph-roman">Brahmi vowel sign AA</div></div><div class="glyph-index">#3</div></div>
+          <div class="glyph-row"><div class="glyph-char">𑀭</div><div><div class="glyph-name">Ra</div><div class="glyph-roman">Brahmi letter RA</div></div><div class="glyph-index">#4</div></div>
+          <div class="glyph-row"><div class="glyph-char">𑀸</div><div><div class="glyph-name">ā (vowel)</div><div class="glyph-roman">Brahmi vowel sign AA</div></div><div class="glyph-index">#5</div></div>
+          <div class="glyph-row"><div class="glyph-char">𑀚</div><div><div class="glyph-name">Ja</div><div class="glyph-roman">Brahmi letter JA</div></div><div class="glyph-index">#6</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HISTORY -->
+  <div class="screen" id="screen-history">
+    <div class="history-layout">
+      <div class="hist-topbar">
+        <div class="hist-title-row">
+          <div class="hist-main-title">Scan History</div>
+          <div class="hist-sub">12 scans · stored locally</div>
+        </div>
+        <button class="hist-export-btn" onclick="exportHistory()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export CSV
+        </button>
+      </div>
+
+      <div class="search-bar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" placeholder="Search by script, inscription, dynasty, or date..." oninput="filterHistory(this.value)">
+      </div>
+
+      <div class="filter-row" id="script-filters">
+        <button class="filter-chip active" onclick="setFilter('All',this)">All (12)</button>
+        <button class="filter-chip" onclick="setFilter('Brahmi',this)">Brahmi</button>
+        <button class="filter-chip" onclick="setFilter('Kharoshthi',this)">Kharoshthi</button>
+        <button class="filter-chip" onclick="setFilter('Persian',this)">Persian</button>
+        <button class="filter-chip" onclick="setFilter('Urdu',this)">Urdu</button>
+        <button class="filter-chip" onclick="setFilter('Arabic',this)">Arabic</button>
+        <button class="filter-chip" onclick="setFilter('Pali',this)">Pali</button>
+        <button class="filter-chip" onclick="setFilter('high',this)" style="border-color:#2e7d32; color:#2e7d32">High Confidence</button>
+      </div>
+
+      <div class="stat-cards">
+        <div class="stat-card"><div class="sc-num">12</div><div class="sc-label">Total Scans</div></div>
+        <div class="stat-card"><div class="sc-num">4</div><div class="sc-label">Scripts Found</div></div>
+        <div class="stat-card"><div class="sc-num">87%</div><div class="sc-label">Avg Confidence</div></div>
+        <div class="stat-card"><div class="sc-num">5</div><div class="sc-label">This Week</div></div>
+      </div>
+
+      <div class="hist-table-wrap">
+        <table class="hist-table">
+          <thead>
+            <tr>
+              <th style="width:48px"></th>
+              <th>Script</th>
+              <th>Inscription</th>
+              <th>Translation</th>
+              <th>Dynasty</th>
+              <th>Date</th>
+              <th>Confidence</th>
+              <th style="width:80px"></th>
+            </tr>
+          </thead>
+          <tbody id="history-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ENCYCLOPEDIA -->
+  <div class="screen" id="screen-encyclopedia">
+    <div class="enc-layout">
+      <div style="display:flex; justify-content:space-between; align-items:center">
+        <div>
+          <div style="font-family:'Playfair Display',serif; font-size:24px; font-weight:700">Script Encyclopedia</div>
+          <div style="font-size:13px; color:var(--text-muted); margin-top:4px">6 ancient writing systems supported in Phase 1</div>
+        </div>
+      </div>
+      <div class="enc-grid" id="enc-grid"></div>
+    </div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div class="screen" id="screen-settings">
+    <div class="settings-layout">
+      <div style="font-family:'Playfair Display',serif; font-size:24px; font-weight:700; margin-bottom:24px">Settings</div>
+
+      <div class="settings-group-card">
+        <div class="sgc-header"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg> Appearance</div>
+        <div class="sgc-row">
+          <div><div class="sgc-label">Language</div><div class="sgc-sub">Interface language</div></div>
+          <select class="sgc-select"><option>English</option><option>हिन्दी</option><option>ગુજરાતી</option></select>
+        </div>
+        <div class="sgc-row">
+          <div><div class="sgc-label">Theme</div><div class="sgc-sub">App color theme</div></div>
+          <select class="sgc-select"><option>Light</option><option>Dark</option><option>System</option></select>
+        </div>
+      </div>
+
+      <div class="settings-group-card">
+        <div class="sgc-header"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><circle cx="12" cy="12" r="3"/><path d="M2 12C2 6.48 6.48 2 12 2s10 4.48 10 10-4.48 10-10 10S2 17.52 2 12z"/></svg> ML & Detection</div>
+        <div class="sgc-row">
+          <div><div class="sgc-label">Model Version</div><div class="sgc-sub">Currently loaded ML model</div></div>
+          <span style="font-size:13px; font-weight:600; color:var(--brahmi)">Plug in your model</span>
+        </div>
+        <div class="sgc-row">
+          <div><div class="sgc-label">Confidence Threshold</div><div class="sgc-sub">Minimum confidence to auto-save</div></div>
+          <select class="sgc-select"><option>60%</option><option selected>70%</option><option>80%</option><option>90%</option></select>
+        </div>
+        <div class="sgc-row">
+          <div><div class="sgc-label">Inference Mode</div><div class="sgc-sub">Where to run ML</div></div>
+          <select class="sgc-select"><option selected>On-device</option><option>Server (when online)</option><option>Auto</option></select>
+        </div>
+      </div>
+
+      <div class="settings-group-card">
+        <div class="sgc-header"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg> Storage & Data</div>
+        <div class="sgc-row">
+          <div><div class="sgc-label">Database Size</div><div class="sgc-sub">Local SQLite storage</div></div>
+          <span style="font-size:13px; color:var(--text-muted)">2.4 MB</span>
+        </div>
+        <div class="sgc-row">
+          <div><div class="sgc-label">Export History</div><div class="sgc-sub">Download all scans</div></div>
+          <div style="display:flex; gap:8px">
+            <button class="sgc-select" style="cursor:pointer" onclick="showToast('Exporting as CSV...')">CSV</button>
+            <button class="sgc-select" style="cursor:pointer" onclick="showToast('Exporting as JSON...')">JSON</button>
+          </div>
+        </div>
+        <div class="sgc-row">
+          <div><div class="sgc-label">Clear All History</div><div class="sgc-sub">Permanently deletes all scans</div></div>
+          <button class="danger-btn" onclick="confirmClear()">Clear All</button>
+        </div>
+      </div>
+
+      <div class="settings-group-card">
+        <div class="sgc-header"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> About</div>
+        <div class="sgc-row">
+          <div class="sgc-label">Version</div>
+          <span style="font-size:13px; color:var(--text-muted)">NumiIT v1.0.0 · Phase 1</span>
+        </div>
+        <div class="sgc-row">
+          <div class="sgc-label">Supported Scripts</div>
+          <span style="font-size:13px; color:var(--text-muted)">Brahmi, Kharoshthi, Persian, Urdu, Arabic, Pali</span>
+        </div>
+      </div>
+
+      <div class="version-tag">NumiIT · Phase 1 · Built for Indian Numismatic Research</div>
+    </div>
+  </div>
+
+</div><!-- end app-layout -->
+
+<!-- DETECTION OVERLAY / MODAL -->
+<div class="detection-overlay" id="detection-overlay">
+  <div class="detection-modal">
+    <div class="dm-header">
+      <div class="dm-title">Analyzing Inscription</div>
+      <button class="dm-close" onclick="closeDetection()">✕</button>
+    </div>
+
+    <div class="step-progress">
+      <div class="step-item">
+        <div class="step-label">1 · Preprocess</div>
+        <div class="step-bar"><div class="step-fill" id="step1"></div></div>
+      </div>
+      <div class="step-item">
+        <div class="step-label">2 · Classify</div>
+        <div class="step-bar"><div class="step-fill" id="step2"></div></div>
+      </div>
+      <div class="step-item">
+        <div class="step-label">3 · Translate</div>
+        <div class="step-bar"><div class="step-fill" id="step3"></div></div>
+      </div>
+    </div>
+
+    <div id="dm-regions" style="margin-bottom:12px"></div>
+
+    <button class="dm-action" id="dm-action-btn" disabled onclick="showResult()">
+      Translate All Regions →
+    </button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>
+  <span id="toast-text">Saved!</span>
+</div>
+
+<script>
+const historyData = [
+  { script:'Brahmi', original:'𑀫𑀳𑀸𑀭𑀸𑀚', translit:'Mahārāja', translation:'Great King', dynasty:'Kushan Empire', date:'Today, 9:38 AM', conf:92 },
+  { script:'Persian', original:'شاه عالم', translit:'Shāh-e-Ālam', translation:'King of the World', dynasty:'Mughal Empire', date:'Today, 8:15 AM', conf:87 },
+  { script:'Kharoshthi', original:'𐨨𐨱𐨪𐨗𐩆', translit:'Maharajasa', translation:'Of the Great King', dynasty:'Indo-Greek Kingdom', date:'Yesterday, 4:22 PM', conf:74 },
+  { script:'Arabic', original:'ضرب في', translit:'Ḍuriba fī', translation:'Struck in', dynasty:'Delhi Sultanate', date:'Yesterday, 11:05 AM', conf:89 },
+  { script:'Pali', original:'ధమ్మిక', translit:'Dhammika', translation:'Righteous', dynasty:'Mauryan Era', date:'May 17, 3:45 PM', conf:81 },
+  { script:'Brahmi', original:'𑀤𑀺𑀯𑀸𑀤𑀸𑀲', translit:'Divādāsa', translation:'Gift of Heaven', dynasty:'Satavahana Dynasty', date:'May 16, 2:10 PM', conf:85 },
+  { script:'Urdu', original:'جلوس میمنت مانوس', translit:"Juloos-e-meimanat", translation:'Auspicious Accession', dynasty:'Mughal Empire', date:'May 15, 10:30 AM', conf:78 },
+  { script:'Persian', original:'بادشاه غازی', translit:'Bādshāh Ghāzī', translation:'Victorious King', dynasty:'Mughal Empire', date:'May 14, 3:00 PM', conf:91 },
+  { script:'Brahmi', original:'𑀭𑀸𑀚𑀸', translit:'Rājā', translation:'King / Ruler', dynasty:'Sunga Dynasty', date:'May 12, 9:20 AM', conf:95 },
+  { script:'Kharoshthi', original:'𐨩𐨱𐨁', translit:'Yavana', translation:'Greek / Westerner', dynasty:'Indo-Scythian Kingdom', date:'May 11, 1:15 PM', conf:69 },
+  { script:'Arabic', original:'خليفة', translit:"Khalīfa", translation:'Caliph / Successor', dynasty:'Sultanate Period', date:'May 10, 4:40 PM', conf:83 },
+  { script:'Pali', original:'ஸர்வஸ்திவாத', translit:'Sarvāstivāda', translation:'All things exist', dynasty:'Buddhist Period', date:'May 9, 11:00 AM', conf:77 },
+];
+
+const encData = [
+  { script:'Brahmi', native:'ब्राह्मी', color:'var(--brahmi)', bgColor:'#e8ebff', period:'3rd BCE – 6th CE', sample:'𑀫𑀳𑀸𑀭𑀸𑀚', sampleTranslation:'"Great King" — Kushan inscription', desc:'Ancestor of most South Asian scripts. Used on coins of Mauryan, Satavahana, and Kushan empires.' },
+  { script:'Kharoshthi', native:'𐨑𐨪𐨆𐨮𐩃𐨁', color:'var(--kharoshthi)', bgColor:'#f3e5f5', period:'3rd BCE – 3rd CE', sample:'𐨨𐨱𐨪𐨗𐩆', sampleTranslation:'"Of the Great King" — Indo-Greek', desc:'Written right-to-left. Used in Gandhara region on coins of Indo-Greek and Indo-Scythian kingdoms.' },
+  { script:'Persian', native:'فارسی', color:'var(--persian)', bgColor:'#e0f2f1', period:'13th–19th CE', sample:'شاه عالم', sampleTranslation:'"King of the World" — Mughal', desc:'Classical Persian used extensively on Mughal coinage, especially during Akbar through Aurangzeb eras.' },
+  { script:'Arabic', native:'العربية', color:'var(--arabic)', bgColor:'#e3f2fd', period:'11th–18th CE', sample:'ضرب في', sampleTranslation:'"Struck in" — Delhi Sultanate', desc:'Arabic legends on Indian coins denote mint, date (Hijri), and ruler titles across the Sultanate period.' },
+  { script:'Urdu', native:'اردو', color:'var(--urdu)', bgColor:'#fce4ec', period:'16th–19th CE', sample:'بادشاه', sampleTranslation:'"Emperor" — Mughal period', desc:'Later Mughal coins blend Urdu with Persian. Used for inscriptions of accession and mint identification.' },
+  { script:'Pali', native:'𑀧𑀸𑀮𑀺', color:'var(--pali)', bgColor:'#efebe9', period:'3rd BCE – 2nd CE', sample:'𑀤𑀳𑀫𑁆𑀫', sampleTranslation:'"Dharma / Law" — Mauryan', desc:'Sacred language of Theravada Buddhism. Appears on coins commemorating Buddhist rulers and relics.' },
+];
+
+const scriptColors = { Brahmi:'var(--brahmi)', Kharoshthi:'var(--kharoshthi)', Persian:'var(--persian)', Urdu:'var(--urdu)', Arabic:'var(--arabic)', Pali:'var(--pali)' };
+const scriptBgs = { Brahmi:'#e8ebff', Kharoshthi:'#f3e5f5', Persian:'#e0f2f1', Urdu:'#fce4ec', Arabic:'#e3f2fd', Pali:'#efebe9' };
+
+function getScriptStyle(s) {
+  return `background:${scriptBgs[s]||'#eee'}; color:${scriptColors[s]||'#555'}`;
+}
+
+function showScreen(id, navBtn, siId) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+  document.querySelectorAll('.nav-link').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.sidebar-item').forEach(b => b.classList.remove('active'));
+  if (navBtn) navBtn.classList.add('active');
+}
+
+function renderHistory(data) {
+  const tbody = document.getElementById('history-tbody');
+  tbody.innerHTML = data.map(r => `
+    <tr onclick="openHistoryItem('${r.script}','${r.translit}','${r.translation}','${r.dynasty}',${r.conf})">
+      <td><div class="td-thumb">🪙</div></td>
+      <td><span class="td-script-tag" style="${getScriptStyle(r.script)}">${r.script}</span></td>
+      <td><div class="td-text">${r.translit}</div><div class="td-sub" style="font-family:'Noto Sans',sans-serif">${r.original}</div></td>
+      <td>${r.translation}</td>
+      <td><div class="td-sub">${r.dynasty}</div></td>
+      <td class="td-date">${r.date}</td>
+      <td><span class="conf-badge ${r.conf>=80?'conf-high':'conf-med'}">${r.conf}%</span></td>
+      <td><div class="row-actions">
+        <button class="row-btn" onclick="event.stopPropagation();showToast('Copied!')" title="Copy">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+        </button>
+        <button class="row-btn" onclick="event.stopPropagation();deleteRow(this)" title="Delete">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3,6 5,6 21,6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+        </button>
+      </div></td>
+    </tr>`).join('');
+}
+
+function renderRecentScans() {
+  const el = document.getElementById('recent-scans');
+  el.innerHTML = historyData.slice(0,6).map(r => `
+    <div class="recent-card" onclick="openHistoryItem('${r.script}','${r.translit}','${r.translation}','${r.dynasty}',${r.conf})">
+      <div class="rc-thumb">🪙</div>
+      <div class="rc-info">
+        <div class="rc-script" style="color:${scriptColors[r.script]||'#888'}">${r.script}</div>
+        <div class="rc-text">${r.translit}</div>
+        <div class="rc-sub">${r.translation}</div>
+      </div>
+      <span class="conf-badge ${r.conf>=80?'conf-high':'conf-med'}">${r.conf}%</span>
+    </div>`).join('');
+}
+
+function renderEncyclopedia() {
+  const grid = document.getElementById('enc-grid');
+  grid.innerHTML = encData.map(e => `
+    <div class="enc-card" onclick="showToast('${e.script} encyclopedia — coming soon!')">
+      <div class="enc-script-badge" style="background:${e.bgColor}; color:${e.color}">${e.script}</div>
+      <div class="enc-script-name">${e.script}</div>
+      <div class="enc-native">${e.native}</div>
+      <div class="enc-period">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        ${e.period}
+      </div>
+      <div class="enc-divider"></div>
+      <div class="enc-sample">${e.sample}</div>
+      <div class="enc-translation">${e.sampleTranslation}</div>
+      <div style="font-size:12px; color:var(--text-muted); margin-top:10px; line-height:1.6">${e.desc}</div>
+    </div>`).join('');
+}
+
+function openHistoryItem(script, translit, translation, dynasty, conf) {
+  document.getElementById('res-script').textContent = script;
+  document.getElementById('res-translit').textContent = translit;
+  document.getElementById('res-translation').textContent = translation;
+  document.getElementById('res-dynasty').textContent = dynasty;
+  document.getElementById('result-badge').textContent = `${script} · ${conf}%`;
+  const fill = document.getElementById('conf-bar');
+  const pct = document.getElementById('conf-pct');
+  fill.style.width = conf + '%';
+  fill.className = 'conf-fill ' + (conf >= 80 ? 'high' : 'med');
+  pct.textContent = conf + '%';
+  pct.style.color = conf >= 80 ? 'var(--success)' : 'var(--warning)';
+  showScreen('result');
+  document.querySelectorAll('.nav-link').forEach(b => b.classList.remove('active'));
+  switchTab('translation', document.querySelector('.rtab'));
+}
+
+function switchTab(name, btn) {
+  document.querySelectorAll('.rtab').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  else document.querySelector('.rtab').classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+}
+
+function triggerScan() {
+  const overlay = document.getElementById('detection-overlay');
+  overlay.classList.add('show');
+  document.getElementById('dm-regions').innerHTML = '';
+  document.getElementById('dm-action-btn').disabled = true;
+  ['step1','step2','step3'].forEach(id => { document.getElementById(id).className = 'step-fill'; document.getElementById(id).style.width='0'; });
+
+  setTimeout(() => { document.getElementById('step1').className = 'step-fill done'; }, 400);
+  setTimeout(() => { document.getElementById('step2').className = 'step-fill active'; }, 800);
+  setTimeout(() => {
+    document.getElementById('step2').className = 'step-fill done';
+    const reg = document.getElementById('dm-regions');
+    reg.innerHTML = `
+      <div class="dm-region">
+        <div class="dm-region-icon" style="background:#e8ebff; border-color:rgba(74,108,247,0.2)">𑀫</div>
+        <div class="dm-region-info">
+          <div class="dm-region-script">Brahmi Script Detected</div>
+          <div class="dm-region-sub">Region 1 · 14 glyphs identified</div>
+        </div>
+        <div class="dm-conf" style="color:var(--success)">92%</div>
+      </div>`;
+  }, 1600);
+  setTimeout(() => {
+    document.getElementById('step3').className = 'step-fill active';
+  }, 2000);
+  setTimeout(() => {
+    document.getElementById('step3').className = 'step-fill done';
+    document.getElementById('dm-action-btn').disabled = false;
+    const reg = document.getElementById('dm-regions');
+    reg.innerHTML += `
+      <div class="dm-region" style="margin-top:8px">
+        <div style="font-size:11px; color:var(--success); font-weight:600; padding:8px 0; border-top:1px solid var(--border); display:flex; align-items:center; gap:6px; margin-top:4px">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>
+          Analysis complete in 2.4s
+        </div>
+      </div>`;
+  }, 3000);
+}
+
+function showResult() {
+  closeDetection();
+  document.getElementById('res-script').textContent = 'Brahmi (ब्राह्मी)';
+  document.getElementById('res-original').textContent = '𑀫𑀳𑀸𑀭𑀸𑀚';
+  document.getElementById('res-translit').textContent = 'Mahārāja';
+  document.getElementById('res-translation').textContent = 'Great King';
+  document.getElementById('res-dynasty').textContent = 'Kushan Empire · 1st–3rd century CE';
+  document.getElementById('result-badge').textContent = 'Brahmi · 92%';
+  document.getElementById('conf-bar').style.width = '92%';
+  document.getElementById('conf-bar').className = 'conf-fill high';
+  document.getElementById('conf-pct').textContent = '92%';
+  document.getElementById('conf-pct').style.color = 'var(--success)';
+  showScreen('result');
+  switchTab('translation', document.querySelector('.rtab'));
+}
+
+function closeDetection() {
+  document.getElementById('detection-overlay').classList.remove('show');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-text').textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+function saveScan() {
+  showToast('Scan saved to history!');
+}
+
+function simulateGallery() {
+  showToast('Gallery import — connect your image picker here');
+  setTimeout(triggerScan, 600);
+}
+
+function exportHistory() {
+  showToast('Exporting history as CSV...');
+}
+
+function filterHistory(q) {
+  const lower = q.toLowerCase();
+  const filtered = historyData.filter(r =>
+    r.script.toLowerCase().includes(lower) ||
+    r.translit.toLowerCase().includes(lower) ||
+    r.translation.toLowerCase().includes(lower) ||
+    r.dynasty.toLowerCase().includes(lower)
+  );
+  renderHistory(filtered);
+}
+
+let activeFilter = 'All';
+function setFilter(f, btn) {
+  activeFilter = f;
+  document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  let filtered = historyData;
+  if (f !== 'All' && f !== 'high') filtered = historyData.filter(r => r.script === f);
+  if (f === 'high') filtered = historyData.filter(r => r.conf >= 80);
+  renderHistory(filtered);
+}
+
+function filterScript(s) {
+  showScreen('history');
+  const chips = document.querySelectorAll('.filter-chip');
+  chips.forEach(c => { if (c.textContent === s) { c.classList.add('active'); } else { c.classList.remove('active'); } });
+  renderHistory(historyData.filter(r => r.script === s));
+}
+
+function toggleFlash() {
+  const labels = ['Flash Off', 'Flash On', 'Flash Auto'];
+  const btn = document.getElementById('flash-label');
+  const cur = labels.indexOf(btn.textContent);
+  btn.textContent = labels[(cur + 1) % 3];
+}
+
+function toggleGrid() { showToast('Grid overlay toggled'); }
+
+function toggleBtn(el) { el.classList.toggle('on'); }
+
+function deleteRow(btn) {
+  btn.closest('tr').style.opacity = '0.3';
+  setTimeout(() => btn.closest('tr').remove(), 300);
+  showToast('Scan deleted. Undo →');
+}
+
+function confirmClear() {
+  if (confirm('Delete all 12 scans? This cannot be undone.')) {
+    document.getElementById('history-tbody').innerHTML = '';
+    showToast('History cleared');
+  }
+}
+
+// Init
+renderHistory(historyData);
+renderRecentScans();
+renderEncyclopedia();
+</script>
+</body>
+</html>
