@@ -1,0 +1,25 @@
+# Flutter
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+build/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets
+.env
+*.keystore
+
+# Generated files
+pubspec.lock
+generated_plugin_registrant.*
+GeneratedPluginRegistrant.*
+generated_plugins.cmake
